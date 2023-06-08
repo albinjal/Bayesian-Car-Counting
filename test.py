@@ -27,7 +27,12 @@ if __name__ == '__main__':
     dataloader = torch.utils.data.DataLoader(datasets, 1, shuffle=False,
                                              num_workers=8, pin_memory=False)
     model = vgg19()
-    device = torch.device('cuda')
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+    elif torch.backends.mps.is_available() and torch.backends.mps.is_built():
+        device = torch.device("mps")
+    else:
+        device = torch.device("cpu")
     model.to(device)
     model.load_state_dict(torch.load(os.path.join(args.save_dir, 'best_model.pth'), device))
     epoch_minus = []

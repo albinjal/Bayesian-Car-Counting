@@ -29,15 +29,16 @@ class RegTrainer(Trainer):
     def setup(self):
         """initial the datasets, model, loss and optimizer"""
         args = self.args
+        self.device_count = 1
         if torch.cuda.is_available():
             self.device = torch.device("cuda")
-            self.device_count = torch.cuda.device_count()
-            # for code conciseness, we release the single gpu version
-            assert self.device_count == 1
             logging.info('using {} gpus'.format(self.device_count))
+        elif torch.backends.mps.is_available() and torch.backends.mps.is_built():
+            self.device = torch.device("mps")
+            logging.info('using mps')
         else:
-            raise Exception("gpu is not available")
-
+            self.device = torch.device("cpu")
+            logging.info('using cpu')
         self.downsample_ratio = args.downsample_ratio
         self.datasets = {x: Crowd(os.path.join(args.data_dir, x),
                                   args.crop_size,
@@ -160,6 +161,3 @@ class RegTrainer(Trainer):
                                                                                  self.best_mae,
                                                                                  self.epoch))
             torch.save(model_state_dic, os.path.join(self.save_dir, 'best_model.pth'))
-
-
-
