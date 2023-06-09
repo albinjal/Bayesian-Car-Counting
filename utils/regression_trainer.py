@@ -75,7 +75,8 @@ class RegTrainer(Trainer):
                                    args.background_ratio,
                                    args.use_background,
                                    self.device)
-        self.criterion = Bay_Loss(args.use_background, self.device)
+        # self.criterion = Bay_Loss(args.use_background, self.device)
+        self.criterion = torch.nn.MSELoss()
         self.save_list = Save_Handle(max_num=args.max_model_num)
         self.best_mae = np.inf
         self.best_mse = np.inf
@@ -108,9 +109,13 @@ class RegTrainer(Trainer):
 
             with torch.set_grad_enabled(True):
                 outputs = self.model(inputs)
-                prob_list = self.post_prob(points, st_sizes)
-                loss = self.criterion(prob_list, targets, outputs)
-
+                
+                points_count = torch.FloatTensor([p.size(0) for p in points])
+                points_count.requires_grad_(True)
+                pre_count = torch.FloatTensor([torch.sum(output) for output in outputs])
+                pre_count.requires_grad_(True)
+                
+                loss =self.criterion(points_count,pre_count)
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
