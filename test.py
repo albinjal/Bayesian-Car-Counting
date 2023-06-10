@@ -34,7 +34,19 @@ if __name__ == '__main__':
     else:
         device = torch.device("cpu")
     model.to(device)
-    model.load_state_dict(torch.load(os.path.join(args.save_dir, 'best_model.pth'), device))
+
+    # if no file with pth suffix, then load from tar
+    if not os.path.exists(os.path.join(args.save_dir, 'best_model.pth')):
+        # find tar name
+        name = ''
+        for file in os.listdir(args.save_dir):
+            if file.endswith('.tar'):
+                name = file
+                break
+        checkpoint = torch.load(os.path.join(args.save_dir, name), device)
+        model.load_state_dict(checkpoint['model_state_dict'])
+    else:
+        model.load_state_dict(torch.load(os.path.join(args.save_dir, 'best_model.pth'), device))
     epoch_minus = []
 
     for inputs, count, name in dataloader:
