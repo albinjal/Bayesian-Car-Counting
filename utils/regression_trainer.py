@@ -11,8 +11,8 @@ import logging
 import numpy as np
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from  models.vgg import vgg19
-#from datasets.crowd import Crowd
-from datasets.crowd_sh import Crowd
+from datasets.crowd import Crowd
+# from datasets.crowd_sh import Crowd
 from losses.bay_loss import Bay_Loss
 from losses.post_prob import Post_Prob
 
@@ -50,7 +50,7 @@ class RegTrainer(Trainer):
                                                       if x == 'train' else default_collate),
                                           batch_size=(args.batch_size
                                           if x == 'train' else 1),
-                                          shuffle=(True if x == 'train' else False),
+                                          shuffle=(False if x == 'train' else False),
                                           num_workers=args.num_workers*self.device_count,
                                           pin_memory=(True if x == 'train' else False))
                             for x in ['train', 'val']}
@@ -100,6 +100,28 @@ class RegTrainer(Trainer):
 
         # Iterate over data.
         for step, (inputs, points, targets, st_sizes) in enumerate(self.dataloaders['train']):
+
+            debug = False
+            if debug:
+                # plot the image and overlaied points
+                import matplotlib.pyplot as plt
+                import matplotlib.patches as patches
+                img = inputs[0].numpy()
+                # shape of img is 3xHxW, need to transpose to HxWx3 for printing
+                img = np.transpose(img, (1, 2, 0))
+
+                # shift the image to [0, 255]
+                img = ((img - np.min(img)) / (np.max(img) - np.min(img))) * 255
+
+                img = img.astype(np.uint8)
+                fig, ax = plt.subplots(1)
+                ax.imshow(img)
+                for p in points[0]:
+                    circle = patches.Circle((p[0], p[1]), radius=2, color='r')
+                    ax.add_patch(circle)
+                plt.show()
+
+
             inputs = inputs.to(self.device)
             st_sizes = st_sizes.to(self.device)
             gd_count = np.array([len(p) for p in points], dtype=np.float32)
