@@ -4,6 +4,8 @@ import numpy as np
 from datasets.crowd import Crowd
 from models.vgg import vgg19
 import argparse
+from matplotlib import cm, pyplot as plt
+from scipy.ndimage import zoom
 
 args = None
 
@@ -48,15 +50,49 @@ if __name__ == '__main__':
     else:
         model.load_state_dict(torch.load(os.path.join(args.save_dir, 'best_model.pth'), device))
     epoch_minus = []
-
+    i = 0
     for inputs, count, name in dataloader:
         inputs = inputs.to(device)
         assert inputs.size(0) == 1, 'the batch size should equal to 1'
         with torch.set_grad_enabled(False):
             outputs = model(inputs)
             temp_minu = count[0].item() - torch.sum(outputs).item()
-            print(name, temp_minu, count[0].item(), torch.sum(outputs).item())
+            print(i, name, temp_minu, count[0].item(), torch.sum(outputs).item())
             epoch_minus.append(temp_minu)
+
+            plot_density_map = True
+            # Plot density map
+            if plot_density_map:
+                dm = outputs.squeeze().detach().cpu().numpy()
+                dm_normalized = dm / np.max(dm)
+                i += 1
+                # create a plot to hold the original image and the density map
+
+                img = inputs.cpu().numpy()[0]
+                # shape of img is 3xHxW, need to transpose to HxWx3 for printing
+                img = np.transpose(img, (1, 2, 0))
+                # shift the image to [0, 255]
+                img = ((img - np.min(img)) / (np.max(img) - np.min(img))) * 255
+                img = img.astype(np.uint8)
+                side_by_side = False
+                if side_by_side:
+                    fig, ax = plt.subplots(1, 2, figsize=(20, 10))
+                    ax[0].imshow(img)
+                    ax[1].imshow(dm_normalized, cmap=cm.jet, vmin=0, vmax=1)
+                else:
+                    # overlay the density map on the original image
+
+                    # We have to calculate the scale for each dimension.
+                    scale_y = img.shape[0]/dm_normalized.shape[0]
+                    scale_x = img.shape[1]/dm_normalized.shape[1]
+
+                    # zoom() function will resize/rescale your density map.
+                    dm_rescaled = zoom(dm_normalized, (scale_y, scale_x))
+                    fig, ax = plt.subplots(figsize=(20, 10))
+                    ax.imshow(img)
+                    ax.imshow(dm_rescaled, cmap=cm.jet, alpha=0.3, vmin=0, vmax=1)
+                # save the figure
+                fig.savefig(os.path.join(args.save_dir, name[0] + '.png'))
 
     epoch_minus = np.array(epoch_minus)
     mse = np.sqrt(np.mean(np.square(epoch_minus)))
