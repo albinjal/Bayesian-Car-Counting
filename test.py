@@ -1,7 +1,7 @@
 import torch
 import os
 import numpy as np
-from datasets.crowd_sh import Crowd
+from datasets.crowd import Crowd
 from models.vgg import vgg19
 import argparse
 from matplotlib import cm, pyplot as plt
