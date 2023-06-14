@@ -1,7 +1,7 @@
 import torch
 import os
 import numpy as np
-from datasets.crowd import Crowd
+from datasets.crowd_sh import Crowd
 from models.vgg import vgg19
 import argparse
 from matplotlib import cm, pyplot as plt
@@ -49,16 +49,22 @@ if __name__ == '__main__':
         model.load_state_dict(checkpoint['model_state_dict'])
     else:
         model.load_state_dict(torch.load(os.path.join(args.save_dir, 'best_model.pth'), device))
-    epoch_minus = []
+    predictions = []
+    ground_truths = []
+
     i = 0
     for inputs, count, name in dataloader:
         inputs = inputs.to(device)
         assert inputs.size(0) == 1, 'the batch size should equal to 1'
         with torch.set_grad_enabled(False):
             outputs = model(inputs)
-            temp_minu = count[0].item() - torch.sum(outputs).item()
+            print(outputs.shape)
+            predicted = torch.sum(outputs).item()
+            groun_truth = count[0].item()
+            temp_minu = groun_truth - groun_truth
             print(i, name, temp_minu, count[0].item(), torch.sum(outputs).item())
-            epoch_minus.append(temp_minu)
+            predictions.append(predicted)
+            ground_truths.append(groun_truth)
 
             plot_density_map = True
             # Plot density map
@@ -76,7 +82,7 @@ if __name__ == '__main__':
                 img = img.astype(np.uint8)
                 side_by_side = False
                 if side_by_side:
-                    fig, ax = plt.subplots(1, 2, figsize=(20, 10))
+                    fig, ax = plt.subplots(1, 2)
                     ax[0].imshow(img)
                     ax[1].imshow(dm_normalized, cmap=cm.jet, vmin=0, vmax=1)
                 else:
@@ -88,14 +94,33 @@ if __name__ == '__main__':
 
                     # zoom() function will resize/rescale your density map.
                     dm_rescaled = zoom(dm_normalized, (scale_y, scale_x))
-                    fig, ax = plt.subplots(figsize=(20, 10))
+                    fig, ax = plt.subplots()
                     ax.imshow(img)
                     ax.imshow(dm_rescaled, cmap=cm.jet, alpha=0.3, vmin=0, vmax=1)
+                # remove the x and y ticks
+                ax.set_xticks([])
+                ax.set_yticks([])
+                # remove the x and y tick labels
+                ax.set_xticklabels([])
+                ax.set_yticklabels([])
+                # remove the axis
+                ax.axis('off')
+                # add title to the figure
+                ax.set_title(f'Predicted: {predicted:.0f}, Ground Truth: {groun_truth:.0f}')
+                # add colorbar to the figure
+                fig.colorbar(cm.ScalarMappable(cmap=cm.jet), ax=ax)
                 # save the figure
                 fig.savefig(os.path.join(args.save_dir, name[0] + '.png'))
 
-    epoch_minus = np.array(epoch_minus)
+    epoch_minus = np.array(predictions) - np.array(ground_truths)
     mse = np.sqrt(np.mean(np.square(epoch_minus)))
     mae = np.mean(np.abs(epoch_minus))
-    log_str = 'Final Test: mae {}, mse {}'.format(mae, mse)
-    print(log_str)
+    precentage_errors = np.abs(epoch_minus) / np.array(ground_truths)
+    precentage_errors = np.nan_to_num(precentage_errors)
+    mape = np.mean(precentage_errors) * 100
+    predicted_cars = np.sum(predictions)
+    ground_truth_cars = np.sum(ground_truths)
+    max_precentage_error = np.max(precentage_errors) * 100
+    total_error = np.sum(epoch_minus)
+    number_of_images = len(epoch_minus)
+    print(f"mse: {mse}, mae: {mae}, mape: {mape} %, predicted_cars: {predicted_cars}, ground_truth_cars: {ground_truth_cars},\nmax_precentage_error: {max_precentage_error} %, total_error: {total_error}, number_of_images: {number_of_images}")
