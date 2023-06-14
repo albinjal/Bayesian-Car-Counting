@@ -136,7 +136,7 @@ class RegTrainer(Trainer):
                 self.optimizer.step()
 
                 N = inputs.size(0)
-                res = outputs.data.cpu().numpy() * self.downsample_ratio - points_count.cpu().numpy()
+                res = outputs.data.cpu().numpy() - points_count.cpu().numpy()
                 epoch_loss.update(loss.item(), N)
                 epoch_mse.update(np.mean(res * res), N)
                 epoch_mae.update(np.mean(abs(res)), N)
@@ -164,7 +164,7 @@ class RegTrainer(Trainer):
             assert inputs.size(0) == 1, 'the batch size should equal to 1 in validation mode'
             with torch.set_grad_enabled(False):
                 outputs = self.model(inputs)
-                res = count[0].item() - torch.sum(outputs).item()
+                res = count[0].item() - outputs.item()
                 epoch_res.append(res)
 
         epoch_res = np.array(epoch_res)
