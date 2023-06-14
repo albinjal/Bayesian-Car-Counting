@@ -130,18 +130,21 @@ class RegTrainer(Trainer):
 
             with torch.set_grad_enabled(True):
                 outputs = self.model(inputs)
-                prob_list = self.post_prob(points, st_sizes)
-                loss = self.criterion(prob_list, targets, outputs)
+                # prob_list = self.post_prob(points, st_sizes)
+                # loss = self.criterion(prob_list, targets, outputs)
+
+                N = inputs.size(0)
+                pre_count = torch.sum(outputs.view(N, -1), dim=1).detach().cpu().numpy()
+                res = pre_count - gd_count
+                mse = np.mean(res * res)
+                loss = mse
 
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
 
-                N = inputs.size(0)
-                pre_count = torch.sum(outputs.view(N, -1), dim=1).detach().cpu().numpy()
-                res = pre_count - gd_count
                 epoch_loss.update(loss.item(), N)
-                epoch_mse.update(np.mean(res * res), N)
+                epoch_mse.update(mse, N)
                 epoch_mae.update(np.mean(abs(res)), N)
 
         logging.info('Epoch {} Train, Loss: {:.2f}, MSE: {:.2f} MAE: {:.2f}, Cost {:.1f} sec'
