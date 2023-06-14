@@ -19,11 +19,16 @@ class VGG(nn.Module):
             nn.ReLU(inplace=True),
             nn.Conv2d(128, 1, 1)
         )
+        self.fc = nn.Linear(4096, 1)
 
     def forward(self, x):
         x = self.features(x)
         x = F.upsample_bilinear(x, scale_factor=2)
         x = self.reg_layer(x)
+        # merge last two dimensions for linear layer
+        x = x.flatten(start_dim=1)
+        # apply linear layer
+        x = self.fc(x)
         return torch.abs(x)
 
 
@@ -53,4 +58,3 @@ def vgg19():
     model = VGG(make_layers(cfg['E']))
     model.load_state_dict(model_zoo.load_url(model_urls['vgg19']), strict=False)
     return model
-

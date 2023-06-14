@@ -75,7 +75,7 @@ class RegTrainer(Trainer):
                                    args.background_ratio,
                                    args.use_background,
                                    self.device)
-        self.criterion = Bay_Loss(args.use_background, self.device)
+        self.criterion = torch.nn.MSELoss()
         self.save_list = Save_Handle(max_num=args.max_model_num)
         self.best_mae = np.inf
         self.best_mse = np.inf
@@ -124,22 +124,19 @@ class RegTrainer(Trainer):
 
             inputs = inputs.to(self.device)
             st_sizes = st_sizes.to(self.device)
-            gd_count = np.array([len(p) for p in points], dtype=np.float32)
-            points = [p.to(self.device) for p in points]
-            targets = [t.to(self.device) for t in targets]
+
 
             with torch.set_grad_enabled(True):
                 outputs = self.model(inputs)
-                prob_list = self.post_prob(points, st_sizes)
-                loss = self.criterion(prob_list, targets, outputs)
+                points_count = torch.FloatTensor([p.size(0) for p in points]).to(self.device)
+                loss = self.criterion(outputs, points_count)
 
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
 
                 N = inputs.size(0)
-                pre_count = torch.sum(outputs.view(N, -1), dim=1).detach().cpu().numpy()
-                res = pre_count - gd_count
+                res = outputs.data.cpu().numpy() * self.downsample_ratio - points_count.cpu().numpy()
                 epoch_loss.update(loss.item(), N)
                 epoch_mse.update(np.mean(res * res), N)
                 epoch_mae.update(np.mean(abs(res)), N)
