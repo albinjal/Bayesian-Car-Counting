@@ -4,10 +4,35 @@
 Authors
 - Bhuradia, Mehul (TODO)
 - Jaldevik, Albin (5839408)
-- Tromp, Marije (TODO)
+- Tromp, Marije (4814495)
 
 ## Introduction
-- Motivation and background
+The need for car counting is prevalent in our modern vehicle dependent society. There are many different scenarios in 
+which it is important to know how many vehicles are in a certain area. Some of these include parking optimization, 
+reducing congestion, and enhancing security. However, with the number the vast number of cars in the world it is not feasible
+to do this by hand. Instead we can use overhead imagery.
+
+Overhead imagery provides a comprehensive and non-intrusive method for car counting. Using overhead images for this purpose
+is not a novel idea. An example of a method that uses these images is presented by Mundhenk et al. (2016). Their best performing method
+uses Residual Learning with Inception, called ResCeption, and is trained on 256x256 patches of larger images. Their approach takes in an
+image and gives the number of cars as output. To count cars in a larger image they had to divide it in patches, using a softmax with 64 outputs. This therefore means that
+each patch can have a maximum of 64 cars in it.
+The authors trained and tested their method on a large publicly available set of overhead images containing cars called Cars Overhead with Context (COWC) that they created themselves.
+We use this same dataset for our project.
+
+Another example of a method that uses the COWC dataset is presented by Douillard (2018), who used the dataset for the NATO Innovation Challenge. Their team used RetinaNet (Lin et al, 2017), which is a single-stage architecture, to create
+a bounding box for each car in an image. If one wanted to count the number of cars in the image the only added step necessary would be to count the number of bounding boxes. This method was improved upon by Stuparu et al. (2020).
+Other methods that count cars on different datasets include but are not limited to Froidevaux et al. (2020) who investigate 2 existing architectures and Liao et al. (2023) who present a new method for counting objects at a specific location.
+
+There are a few problems with the current methods. They use large networks, thus making them difficult to train with limited resources.
+Their frameworks are often intricate to allow for good performance, and are therefore likely task specific. Some require multiple types of data of the same location,
+or they can't take in large images and have to instead divide the image in patches. The latter can lead to counting errors when the car is divided over 2 or more patches.
+Lastly some also need tricks to be able to work. An example is the limiting of the maximum number of cars in a single patch to 64, like we mentioned earlier.
+
+In this project we use a different approach to car counting from overhead images, namely Bayesian Loss (BL) as presented by Ma et al. (2019). The authors created BL as an alternative to
+to the most common method for crowd counting, namely density map estimation. They state that using density maps ground-truth is very 
+susceptible to errors because of many reasons, for example occlusions. The authors explain that BL converts the point annotations into a density contribution 
+probability model, using the annotations as priors instead of ground-truth. According to them this mitigates the mentioned problems.  They show that BL is able to reach state-of-the-art performance with only a simple network. We apply BL to the COWC dataset. To do this we use the code made publicly available by Ma et al. (2019). 
 
 ## Method
 - Could also be merged with results section if prefered
@@ -22,8 +47,19 @@ Authors
 
 
 ## References
+Douillard, A. (2018, June 21). Detecting cars from aerial imagery for the NATO Innovation Challenge. Arthur Douillard. https://arthurdouillard.com/post/nato-challenge/ 
 
+Froidevaux, A., Julier, A., Lifschitz, A., Pham, M. T., Dambreville, R., Lefèvre, S., ... & Huynh, T. L. (2020, September). Vehicle detection and counting from VHR satellite images: Efforts and open issues. In IGARSS 2020-2020 IEEE International Geoscience and Remote Sensing Symposium (pp. 256-259). IEEE.
 
+Liao, L., Xiao, J., Yang, Y., Ma, X., Wang, Z., & Satoh, S. I. (2023). High temporal frequency vehicle counting from low-resolution satellite images. ISPRS Journal of Photogrammetry and Remote Sensing, 198, 45-59.
+
+Lin, T. Y., Goyal, P., Girshick, R., He, K., & Dollár, P. (2017). Focal loss for dense object detection. In Proceedings of the IEEE international conference on computer vision (pp. 2980-2988).
+
+Ma, Z., Wei, X., Hong, X., & Gong, Y. (2019). Bayesian loss for crowd count estimation with point supervision. In Proceedings of the IEEE/CVF international conference on computer vision (pp. 6142-6151).
+
+Mundhenk, T. N., Konjevod, G., Sakla, W. A., & Boakye, K. (2016). A large contextual dataset for classification, detection and counting of cars with deep learning. In Computer Vision–ECCV 2016: 14th European Conference, Amsterdam, The Netherlands, October 11-14, 2016, Proceedings, Part III 14 (pp. 785-800). Springer International Publishing.
+
+Stuparu, D.-G., Ciobanu, R.-I., & Dobre, C. (2020). Vehicle Detection in Overhead Satellite Images Using a One-Stage Object Detection Model. Sensors, 20(22), 6485. https://doi.org/10.3390/s20226485
 
 ## Guidelines
 
