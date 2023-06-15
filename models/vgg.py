@@ -19,7 +19,7 @@ class VGG(nn.Module):
             nn.ReLU(inplace=True),
             nn.Conv2d(128, 1, 1)
         )
-        self.fc = nn.Linear(4096, 1)
+        self.fc = nn.Linear(62500, 1)
 
     def forward(self, x):
         x = self.features(x)
