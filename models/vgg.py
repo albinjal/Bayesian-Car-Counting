@@ -26,7 +26,7 @@ class VGG(nn.Module):
         x = F.upsample_bilinear(x, scale_factor=2)
         x = self.reg_layer(x)
         # merge last two dimensions for linear layer
-        x = x.flatten(start_dim=1)
+        x = x.flatten(start_dim=-2)
         # apply linear layer
         x = self.fc(x)
         return torch.abs(x)

@@ -129,17 +129,18 @@ class RegTrainer(Trainer):
             with torch.set_grad_enabled(True):
                 outputs = self.model(inputs)
                 points_count = torch.FloatTensor([p.size(0) for p in points]).to(self.device)
-                loss = self.criterion(outputs, points_count)
+                res = outputs - points_count
+                mse = (res * res).mean()
+                loss = mse
 
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
 
                 N = inputs.size(0)
-                res = outputs.data.cpu().numpy() - points_count.cpu().numpy()
                 epoch_loss.update(loss.item(), N)
-                epoch_mse.update(np.mean(res * res), N)
-                epoch_mae.update(np.mean(abs(res)), N)
+                epoch_mse.update(mse.item(), N)
+                epoch_mae.update(res.abs().mean().item(), N)
 
         logging.info('Epoch {} Train, Loss: {:.2f}, MSE: {:.2f} MAE: {:.2f}, Cost {:.1f} sec'
                      .format(self.epoch, epoch_loss.get_avg(), np.sqrt(epoch_mse.get_avg()), epoch_mae.get_avg(),
