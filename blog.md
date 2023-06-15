@@ -140,3 +140,7 @@ We additionally made a bunch of modifications to the official Bayesian Loss for 
 - Added support for testing .tar checkpoint files and not only .pth files.
 - Added the option to output the density map images for the test set.
 - Added additional metrics for model evaluation.
+
+## Appendix B: Additional Experiments
+We also ran some additional experiments that are not included in the report. These experiments are listed below:
+- We retrained the original Bayesian Loss model for 600 epochs on the crowd counting UCF-QNRF dataset. The training took about 12 h. On the testing set, the model achived mean absolute error of 91.5 and mean squared error 168.8 compared to the original paper's results of 88.7, and 154.8 respectively. The results are almost as good as the original paper and the difference is likely due to the fact that we trained for 600 epochs instead of 1000 epochs.
