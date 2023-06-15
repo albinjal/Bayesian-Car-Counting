@@ -1,7 +1,7 @@
 import torch
 import os
 import numpy as np
-from datasets.crowd import Crowd
+from datasets.crowd_sh import Crowd
 from models.vgg import vgg19
 import argparse
 from matplotlib import cm, pyplot as plt
@@ -58,7 +58,6 @@ if __name__ == '__main__':
         assert inputs.size(0) == 1, 'the batch size should equal to 1'
         with torch.set_grad_enabled(False):
             outputs = model(inputs)
-            print(outputs.shape)
             predicted = torch.sum(outputs).item()
             groun_truth = count[0].item()
             temp_minu = groun_truth - groun_truth
@@ -123,4 +122,7 @@ if __name__ == '__main__':
     max_precentage_error = np.max(precentage_errors) * 100
     total_error = np.sum(epoch_minus)
     number_of_images = len(epoch_minus)
-    print(f"mse: {mse}, mae: {mae}, mape: {mape} %, predicted_cars: {predicted_cars}, ground_truth_cars: {ground_truth_cars},\nmax_precentage_error: {max_precentage_error} %, total_error: {total_error}, number_of_images: {number_of_images}")
+    log = f"mse: {mse}, mae: {mae}, mape: {mape} %, predicted_cars: {predicted_cars}, ground_truth_cars: {ground_truth_cars},\nmax_precentage_error: {max_precentage_error} %, total_error: {total_error}, number_of_images: {number_of_images}"
+    print(log)
+    with open(os.path.join(args.save_dir, 'test_log.txt'), 'w') as f:
+        f.write(log)
