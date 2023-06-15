@@ -120,7 +120,45 @@ The predicted car count of 7923.845 closely aligns with the ground truth count o
 The results confirm the effectiveness of BL in minimizing counting inaccuracies, aligning with our expectations.
 
 ### Generalization
-The generalization of the model was evaluated using aerial images obtained from Google Earth of the TU Delft campus. Remarkably, the model performed exceptionally well in accurately counting cars in these images. The accompanying density maps visually depict the distribution of cars within the campus, while the model's predicted car count provides a quantitative estimation. The density maps demonstrate that the model successfully captures the areas with higher car density, aligning closely with the ground truth counts. This outcome indicates that the model can effectively generalize its car counting capability to new and diverse aerial images, showcasing its robustness and versatility in different contexts.
+The generalization of the model was evaluated using aerial images obtained from Google Earth of the TU Delft campus. We selected the three images for this.
+<p float="left">
+    <img src="imgs/Google_earth_1.jpg" width="48%" />
+    <img src="imgs/Google_earth_1.png" width="48%" />
+</p>
+Image: Google ©2022 Landsat/Copernicus
+
+We selected this first image because in the right half of the image it includes a few cars that are almost entirely covered by trees. 
+These cars are barely visible in the image, so therefore we did not include them in the ground truth, but we were curious if the model would be able 
+to recognize them. 
+
+In the right image we can see that the model was not able to recognize the cars that were covered by the trees, as we expected. It also missed 5 cars that we did count.
+Most of the cars that it missed were partially covered by trees, which is most likely the reason that they were not counted. The only car that was not 
+covered is the green one on the upper right.
+
+<p float="left">
+    <img src="imgs/Google_earth_2.jpg" width="48%" />
+    <img src="imgs/Google_earth_2.png" width="48%" />
+</p>
+Image: Google ©2022 Landsat/Copernicus
+
+We selected the second image because a small part of the image is relatively densely packed with cars, there is a large empty space, 
+and there is a single car on a road. Therefore this image is able to show how the model performs on both dense and sparse areas. As we can see in the
+right image the models prediction is only 1 off of the actual ground truth. It is able to recognize both the dense and sparse ereas. 
+
+<p float="left">
+    <img src="imgs/Google_earth_3.jpg" width="48%" />
+    <img src="imgs/Google_earth_3.png" width="48%" />
+</p>
+Image: Google ©2022 Landsat/Copernicus
+
+We selected the third image because most of the image is relatively easy to count, but it does include a small strip of shadows in which 3 cars are located.
+One of these cars is black and therefore almost invisible in the shadow. It also includes a small cart. This image is therefore able 
+to test how well the model is able to recognize cars while also not highlighting other objects. 
+
+As we can see in the right image the model is again almost spot on with its prediction. It predicts there to be one more car than there actually is, but it was able
+to highlight the black car in the shadow while also not highlighting the cart in the right upper corner. 
+
+Remarkably, the model performed exceptionally well in accurately counting cars in these images. The accompanying density maps visually depict the distribution of cars within the campus, while the model's predicted car count provides a quantitative estimation. The density maps demonstrate that the model successfully captures the areas with higher car density, aligning closely with the ground truth counts. This outcome indicates that the model can effectively generalize its car counting capability to new and diverse aerial images, showcasing its robustness and versatility in different contexts.
 
 ## Conclusion
 In conclusion, the utilization of Bayesian Loss (BL) in the VGG-19 model significantly improves its performance in car counting tasks. BL consistently outperformed the traditional Mean Squared Error (MSE) loss function, demonstrating superior accuracy, precision, and percentage error metrics. Moreover, the model showcased impressive generalization capabilities, successfully counting cars in overhead images obtained from various sources, including the TU Delft campus on Google Earth. This ability to generalize to different overhead images highlights the model's adaptability and effectiveness in real-world scenarios. By leveraging BL and its robust generalization, we have laid a solid foundation for accurate and efficient car counting in diverse environments, opening doors to a wide range of applications such as parking optimization, congestion management, and enhanced security.
