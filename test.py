@@ -61,12 +61,11 @@ if __name__ == '__main__':
             print(outputs.shape)
             predicted = torch.sum(outputs).item()
             groun_truth = count[0].item()
-            temp_minu = groun_truth - groun_truth
-            print(i, name, temp_minu, count[0].item(), torch.sum(outputs).item())
+            print(i, name, groun_truth - groun_truth, groun_truth, predicted)
             predictions.append(predicted)
             ground_truths.append(groun_truth)
 
-            plot_density_map = True
+            plot_density_map = False
             # Plot density map
             if plot_density_map:
                 dm = outputs.squeeze().detach().cpu().numpy()
