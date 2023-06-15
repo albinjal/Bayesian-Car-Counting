@@ -7,8 +7,8 @@ Authors
 - Tromp, Marije (4814495)
 
 ## Introduction
-The need for car counting is prevalent in our modern vehicle dependent society. There are many different scenarios in 
-which it is important to know how many vehicles are in a certain area. Some of these include parking optimization, 
+The need for car counting is prevalent in our modern vehicle dependent society. There are many different scenarios in
+which it is important to know how many vehicles are in a certain area. Some of these include parking optimization,
 reducing congestion, and enhancing security. However, with the number the vast number of cars in the world it is not feasible
 to do this by hand. Instead we can use overhead imagery.
 
@@ -30,26 +30,26 @@ or they can't take in large images and have to instead divide the image in patch
 Lastly some also need tricks to be able to work. An example is the limiting of the maximum number of cars in a single patch to 64, like we mentioned earlier.
 
 In this project we use a different approach to car counting from overhead images, namely Bayesian Loss (BL) as presented by Ma et al. (2019). The authors created BL as an alternative to
-to the most common method for crowd counting, namely density map estimation. They state that using density maps ground-truth is very 
-susceptible to errors because of many reasons, for example occlusions. The authors explain that BL converts the point annotations into a density contribution 
-probability model, using the annotations as priors instead of ground-truth. According to them this mitigates the mentioned problems. 
+to the most common method for crowd counting, namely density map estimation. They state that using density maps ground-truth is very
+susceptible to errors because of many reasons, for example occlusions. The authors explain that BL converts the point annotations into a density contribution
+probability model, using the annotations as priors instead of ground-truth. According to them this mitigates the mentioned problems.
 In their paper they show that since the BL looks as follows:
-![](imgs/bayes_loss.png)
+$$\mathcal{L}^{\text{Bayes}} = \sum^{N}_{n=1}\mathcal{F}(1- E[c_n])$$
 
 where F is a distance function, N is the number of point annotations, and E[cn] is the sum of the posterior probabilities multiplied with the estimated density map.
-They show that BL is able to reach state-of-the-art performance with only a simple network. We apply BL to the COWC dataset. To do this we use the code made publicly available by Ma et al. (2019). 
+They show that BL is able to reach state-of-the-art performance with only a simple network. We apply BL to the COWC dataset. To do this we use the code made publicly available by Ma et al. (2019).
 
 ## Method
-To apply BL to the car counting task we used the publicly available codebase from Ma et al. (2019), which contains the code for all steps necessary to 
+To apply BL to the car counting task we used the publicly available codebase from Ma et al. (2019), which contains the code for all steps necessary to
 train and test a model that can count cars in images. Their code uses the VGG-19 network and includes support for the 2 different
 image datasets they used in their paper.
 
-During preprocessing their code calculates the mean distance to the closest three annotation to try and measure how big the 
+During preprocessing their code calculates the mean distance to the closest three annotation to try and measure how big the
 object is. During training this value is clipped to a value that could realistically make sense, which is a main difference
-between the support for the 2 different classes. 
+between the support for the 2 different classes.
 
 In this project we used the new COWC dataset instead of these 2 classes. We trained models using the support for both datasets using
-VGG-19, a version of one of the supports using different clip values that could make more sense for the COWC dataset, and 
+VGG-19, a version of one of the supports using different clip values that could make more sense for the COWC dataset, and
 the combination of one of the supports and AlexNet instead of VGG-19. To be able to quantify the results of our experiments we used VGG-19 with Mean Squared Error (MSE) loss as a baseline.
 
 ## Results
@@ -62,7 +62,7 @@ the combination of one of the supports and AlexNet instead of VGG-19. To be able
 
 
 ## References
-Douillard, A. (2018, June 21). Detecting cars from aerial imagery for the NATO Innovation Challenge. Arthur Douillard. https://arthurdouillard.com/post/nato-challenge/ 
+Douillard, A. (2018, June 21). Detecting cars from aerial imagery for the NATO Innovation Challenge. Arthur Douillard. https://arthurdouillard.com/post/nato-challenge/
 
 Froidevaux, A., Julier, A., Lifschitz, A., Pham, M. T., Dambreville, R., Lefèvre, S., ... & Huynh, T. L. (2020, September). Vehicle detection and counting from VHR satellite images: Efforts and open issues. In IGARSS 2020-2020 IEEE International Geoscience and Remote Sensing Symposium (pp. 256-259). IEEE.
 
