@@ -99,9 +99,6 @@ max_precentage_error: 513.8685703277588 %, total_error: -135.15535855293274, num
 ### Problems
 
 
-### Data Loaders
-
-
 ### Networks
 
 
@@ -144,3 +141,20 @@ We additionally made a bunch of modifications to the official Bayesian Loss for 
 ## Appendix B: Additional Experiments
 We also ran some additional experiments that are not included in the report. These experiments are listed below:
 - We retrained the original Bayesian Loss model for 600 epochs on the crowd counting UCF-QNRF dataset. The training took about 12 h. On the testing set, the model achived mean absolute error of 91.5 and mean squared error 168.8 compared to the original paper's results of 88.7, and 154.8 respectively. The results are almost as good as the original paper and the difference is likely due to the fact that we trained for 600 epochs instead of 1000 epochs.
+- TODO: Data Loaders
+
+Regular data loader:
+
+mse: 10.549089093293093, mae: 5.776052191673991, mape: 13.678562214354596 %, predicted_cars: 7646.473026424646, ground_truth_cars: 8059,
+max_precentage_error: 278.84459495544434 %, total_error: -412.5269735753536, number_of_images: 83
+
+
+Crowd_sh data loader:
+
+mse: 13.68982433593867, mae: 6.3752776312540815, mape: 47.67265583016418 %, predicted_cars: 7923.844641447067, ground_truth_cars: 8059,
+max_precentage_error: 513.8685703277588 %, total_error: -135.15535855293274, number_of_images: 83
+
+
+No background:
+mse: 9.559422577343925, mae: 7.137962111507553, mape: 95.88508438419035 %, predicted_cars: 8449.359783172607, ground_truth_cars: 8059,
+max_precentage_error: 840.2718544006348 %, total_error: 390.3597831726074, number_of_images: 83

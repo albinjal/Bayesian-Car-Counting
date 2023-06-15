@@ -7,10 +7,14 @@ def draw_bboxes(jpg_file, npy_file):
     image = cv2.imread(jpg_file)
     annotations = np.load(npy_file)
     print(annotations.shape)
+    print(image.shape)
 
     # draw bounding boxes
     for annotation in annotations:
-        x, y, _ = annotation
+        try:
+            x, y, _ = annotation
+        except:
+            x, y = annotation
         x, y = int(x), int(y)  # coordinates should be integers
         cv2.rectangle(image,
                       (x - 8, y - 8),
@@ -23,7 +27,7 @@ def draw_bboxes(jpg_file, npy_file):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    dataset = "cowc_pre/train"
+    dataset = "out"
 
     # get random jpg and its corresponding npy file from dataset
     jpg_files = glob.glob(dataset + "/*.jpg")
