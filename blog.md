@@ -96,6 +96,18 @@ mse: 13.68982433593867, mae: 6.3752776312540815, mape: 47.67265583016418 %, pred
 max_precentage_error: 513.8685703277588 %, total_error: -135.15535855293274, number_of_images: 83
 
 
+### Problems
+
+
+### Data Loaders
+
+
+### Networks
+
+
+### Generalization
+
+
 ## Conclusion
 - Shorter conclusion
 
