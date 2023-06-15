@@ -1,5 +1,9 @@
 # Improving car counting with Bayesian Loss
 ## CS4245, Computer Vision by Deep Learning
+<p align="center">
+  <img src="imgs/patch_11_46_crop.png">
+</p>
+
 ### Group 13
 Authors
 - Bhuradia, Mehul (TODO)
@@ -54,6 +58,15 @@ the combination of one of the supports and AlexNet instead of VGG-19. To be able
 
 ## Results
 - Combined results and discussion
+Result from standard BL with VGG-19 and crowd_sh loader
+Good:
+![Results](imgs/patch_11_37.png)
+Bad:
+![Results](imgs/patch_15_1.png)
+
+Total res
+mse: 13.68982433593867, mae: 6.3752776312540815, mape: 47.67265583016418 %, predicted_cars: 7923.844641447067, ground_truth_cars: 8059,
+max_precentage_error: 513.8685703277588 %, total_error: -135.15535855293274, number_of_images: 83
 
 
 ## Conclusion
