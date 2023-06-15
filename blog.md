@@ -88,11 +88,14 @@ After applying Bayesian Loss (BL) to the car counting task using the VGG-19 netw
 
 The table below presents the performance metrics obtained from the experiments conducted on the COWC dataset using different models and loss functions.
 
+
 |      Model      |    Changes    |  mse      |   mae    |    mape       | predicted_cars   | ground_truth_cars | max_precentage_error | total_error | number_of_images |
 |-----------------|-------------|----------|----------|---------------|------------------|-------------------|----------------------|--------------|------------------|
 | VGG-19 (with BL)| Regular data loader | 10.549   | 5.776    | 13.678 %      | 7646.473         | 8059              | 278.845 %            | -412.527     | 83               |
 | VGG-19 (with BL)| Crowd_sh data loader | 13.690   | 6.375    | 47.673 %      | 7923.845         | 8059              | 513.869 %            | -135.155     | 83               |
 | VGG-19 (with BL)| No background       | 9.559    | 7.138    | 95.885 %      | 8449.360         | 8059              | 840.272 %            | 390.360      | 83               |
+| VGG-19 (with MSE)| -          | 32.986   | 23.407   | 105.143 %     | 8990.832         | 8059              | 1703.518 %            | 931.832      | 83               |
+
 
 - Combined results and discussion
 Result from standard BL with VGG-19 and crowd_sh loader
@@ -110,7 +113,11 @@ max_precentage_error: 513.8685703277588 %, total_error: -135.15535855293274, num
 
 
 ### Networks
-The results clearly demonstrate the superior performance of VGG-19 with Bayesian Loss (BL) compared to VGG-19 with Mean Squared Error (MSE) as the loss function. BL consistently outperforms MSE in all evaluated metrics, including MSE, MAE, and MAPE, indicating better accuracy and precision in predicting car counts. BL achieves a significantly lower MSE value of [BL_MSE], while its MAE of [BL_MAE] and MAPE of [BL_MAPE]% further showcase its superior performance. The predicted car count of [BL_Predicted] closely aligns with the ground truth count of [BL_Ground_Truth], resulting in a maximum percentage error of [BL_Max_Percentage]%. In contrast, VGG-19 with MSE exhibits higher prediction errors, as indicated by its higher MSE of [MSE]. Its MAE of [MAE] and MAPE of [MAPE]% also highlight its suboptimal precision. The results confirm the effectiveness of BL in minimizing counting inaccuracies, aligning with our expectations.
+The results clearly demonstrate the superior performance of VGG-19 with Bayesian Loss (BL) compared to VGG-19 with Mean Squared Error (MSE) as the loss function. BL consistently outperforms MSE in all evaluated metrics, including MSE, MAE, and MAPE, indicating better accuracy and precision in predicting car counts. BL achieves a significantly lower MSE value of 13.690, while its MAE of 6.375 and MAPE of 47.673% further showcase its superior performance.
+
+The predicted car count of 7923.845 closely aligns with the ground truth count of 8059, resulting in a maximum percentage error of -135.155%. In contrast, VGG-19 with MSE exhibits higher prediction errors, as indicated by its higher MSE of 32.986. Its MAE of 23.407 and MAPE of 105.143% also highlight its suboptimal precision.
+
+The results confirm the effectiveness of BL in minimizing counting inaccuracies, aligning with our expectations.
 
 ### Generalization
 The generalization of the model was evaluated using aerial images obtained from Google Earth of the TU Delft campus. Remarkably, the model performed exceptionally well in accurately counting cars in these images. The accompanying density maps visually depict the distribution of cars within the campus, while the model's predicted car count provides a quantitative estimation. The density maps demonstrate that the model successfully captures the areas with higher car density, aligning closely with the ground truth counts. This outcome indicates that the model can effectively generalize its car counting capability to new and diverse aerial images, showcasing its robustness and versatility in different contexts.
