@@ -33,7 +33,7 @@ Penalties for Content (blog):
 
 ### Group 13
 Authors
-- Bhuradia, Mehul (TODO)
+- Bhuradia, Mehul (4848969)
 - Jaldevik, Albin (5839408)
 - Tromp, Marije (4814495)
 
