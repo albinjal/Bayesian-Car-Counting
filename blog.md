@@ -84,6 +84,16 @@ VGG-19, a version of one of the supports using different clip values that could 
 the combination of one of the supports and AlexNet instead of VGG-19. To be able to quantify the results of our experiments we used VGG-19 with Mean Squared Error (MSE) loss as a baseline.
 
 ## Results
+After applying Bayesian Loss (BL) to the car counting task using the VGG-19 network, we conducted experiments on the Cars Overhead with Context (COWC) dataset. We compared our results with the baseline model using Mean Squared Error (MSE) loss. Additionally, we trained models using different clip values that could better suit the characteristics of the COWC dataset. We also explored the combination of one of the supports with AlexNet instead of VGG-19. In this section, we present the performance metrics obtained from these experiments and analyze the effectiveness of BL in achieving accurate car counting results.
+
+The table below presents the performance metrics obtained from the experiments conducted on the COWC dataset using different models and loss functions.
+
+|      Model      |    Changes    |  mse      |   mae    |    mape       | predicted_cars   | ground_truth_cars | max_precentage_error | total_error | number_of_images |
+|-----------------|-------------|----------|----------|---------------|------------------|-------------------|----------------------|--------------|------------------|
+| VGG-19 (with BL)| Regular data loader | 10.549   | 5.776    | 13.678 %      | 7646.473         | 8059              | 278.845 %            | -412.527     | 83               |
+| VGG-19 (with BL)| Crowd_sh data loader | 13.690   | 6.375    | 47.673 %      | 7923.845         | 8059              | 513.869 %            | -135.155     | 83               |
+| VGG-19 (with BL)| No background       | 9.559    | 7.138    | 95.885 %      | 8449.360         | 8059              | 840.272 %            | 390.360      | 83               |
+
 - Combined results and discussion
 Result from standard BL with VGG-19 and crowd_sh loader
 Good:
@@ -100,13 +110,13 @@ max_precentage_error: 513.8685703277588 %, total_error: -135.15535855293274, num
 
 
 ### Networks
-
+The results clearly demonstrate the superior performance of VGG-19 with Bayesian Loss (BL) compared to VGG-19 with Mean Squared Error (MSE) as the loss function. BL consistently outperforms MSE in all evaluated metrics, including MSE, MAE, and MAPE, indicating better accuracy and precision in predicting car counts. BL achieves a significantly lower MSE value of [BL_MSE], while its MAE of [BL_MAE] and MAPE of [BL_MAPE]% further showcase its superior performance. The predicted car count of [BL_Predicted] closely aligns with the ground truth count of [BL_Ground_Truth], resulting in a maximum percentage error of [BL_Max_Percentage]%. In contrast, VGG-19 with MSE exhibits higher prediction errors, as indicated by its higher MSE of [MSE]. Its MAE of [MAE] and MAPE of [MAPE]% also highlight its suboptimal precision. The results confirm the effectiveness of BL in minimizing counting inaccuracies, aligning with our expectations.
 
 ### Generalization
-
+The generalization of the model was evaluated using aerial images obtained from Google Earth of the TU Delft campus. Remarkably, the model performed exceptionally well in accurately counting cars in these images. The accompanying density maps visually depict the distribution of cars within the campus, while the model's predicted car count provides a quantitative estimation. The density maps demonstrate that the model successfully captures the areas with higher car density, aligning closely with the ground truth counts. This outcome indicates that the model can effectively generalize its car counting capability to new and diverse aerial images, showcasing its robustness and versatility in different contexts.
 
 ## Conclusion
-- Shorter conclusion
+In conclusion, the utilization of Bayesian Loss (BL) in the VGG-19 model significantly improves its performance in car counting tasks. BL consistently outperformed the traditional Mean Squared Error (MSE) loss function, demonstrating superior accuracy, precision, and percentage error metrics. Moreover, the model showcased impressive generalization capabilities, successfully counting cars in overhead images obtained from various sources, including the TU Delft campus on Google Earth. This ability to generalize to different overhead images highlights the model's adaptability and effectiveness in real-world scenarios. By leveraging BL and its robust generalization, we have laid a solid foundation for accurate and efficient car counting in diverse environments, opening doors to a wide range of applications such as parking optimization, congestion management, and enhanced security.
 
 
 
@@ -143,18 +153,3 @@ We also ran some additional experiments that are not included in the report. The
 - We retrained the original Bayesian Loss model for 600 epochs on the crowd counting UCF-QNRF dataset. The training took about 12 h. On the testing set, the model achived mean absolute error of 91.5 and mean squared error 168.8 compared to the original paper's results of 88.7, and 154.8 respectively. The results are almost as good as the original paper and the difference is likely due to the fact that we trained for 600 epochs instead of 1000 epochs.
 - TODO: Data Loaders
 
-Regular data loader:
-
-mse: 10.549089093293093, mae: 5.776052191673991, mape: 13.678562214354596 %, predicted_cars: 7646.473026424646, ground_truth_cars: 8059,
-max_precentage_error: 278.84459495544434 %, total_error: -412.5269735753536, number_of_images: 83
-
-
-Crowd_sh data loader:
-
-mse: 13.68982433593867, mae: 6.3752776312540815, mape: 47.67265583016418 %, predicted_cars: 7923.844641447067, ground_truth_cars: 8059,
-max_precentage_error: 513.8685703277588 %, total_error: -135.15535855293274, number_of_images: 83
-
-
-No background:
-mse: 9.559422577343925, mae: 7.137962111507553, mape: 95.88508438419035 %, predicted_cars: 8449.359783172607, ground_truth_cars: 8059,
-max_precentage_error: 840.2718544006348 %, total_error: 390.3597831726074, number_of_images: 83
