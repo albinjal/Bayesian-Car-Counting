@@ -25,8 +25,9 @@ class VGG(nn.Module):
         x = self.features(x)
         x = F.upsample_bilinear(x, scale_factor=2)
         x = self.reg_layer(x)
+        # TODO: fix the dimensions and start dim here. Take into account the downsampling
         # merge last two dimensions for linear layer
-        x = x.flatten(start_dim=-2)
+        x = x.flatten(start_dim=1)
         # apply linear layer
         x = self.fc(x)
         return torch.abs(x)
