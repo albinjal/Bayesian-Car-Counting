@@ -116,4 +116,15 @@ Mundhenk, T. N., Konjevod, G., Sakla, W. A., & Boakye, K. (2016). A large contex
 
 Stuparu, D.-G., Ciobanu, R.-I., & Dobre, C. (2020). Vehicle Detection in Overhead Satellite Images Using a One-Stage Object Detection Model. Sensors, 20(22), 6485. https://doi.org/10.3390/s20226485
 
-## Additional
+## Appendix A: Code Modications
+
+We additionally made a bunch of modifications to the official Bayesian Loss for Crowd Count Estimation with Point Supervision implementation. The modificaitons is spread out over multiple branches in our fork of the repository. Some changes are highlighted below:
+
+- Added support for converting the format of the COWC dataset to the format used by the original implementation.
+- Added support for debugging the dataset by inspecting the annotations overlayed on the images.
+- Added support for using AlexNet instead of VGG-19.
+- Modified the model to support direct count regression instead of density map estimation.
+- Added support for training on Mac GPUs (MPS) instead of only CUDA GPUs.
+- Added support for testing .tar checkpoint files and not only .pth files.
+- Added the option to output the density map images for the test set.
+- Added additional metrics for model evaluation.
