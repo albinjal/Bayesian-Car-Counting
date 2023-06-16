@@ -100,6 +100,7 @@ The table below presents the performance metrics obtained from the experiments c
 | BL               | **9.56**   | 7.14   | 95.89   | 840.27                   | 8449            | **390**         |
 | **BL+**              | 10.55  | **5.78**   | **13.68**   | **278.85**                   | 7646            | -413        |
 
+All models use VGG-19 as backbone and the same data loader and dataset. The test sets consists of 83 images with a total of 8059 cars. The MSE model uses MSE as loss function, BL uses Bayesian Loss, and BL+ uses Bayesian Loss with background count. The best results are highlighted in bold.
 
 
 
