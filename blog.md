@@ -62,9 +62,16 @@ In this project, we use a different approach to car counting from overhead image
 susceptible to errors because of many reasons, for example, occlusions. The authors explain that BL converts the point annotations into a density contribution
 probability model, using the annotations as priors instead of ground truth. According to them, this mitigates the mentioned problems.
 In their paper, they show that since the BL looks as follows:
-$$\mathcal{L}^{\text{Bayes}} = \sum^{N}_{n=1}\mathcal{F}(1- E[c_n])$$
+$$\mathcal{L}^{\text{Bayes}} = \sum^{N}_{n=1}\mathcal{F}(1- E[c_n]),$$
 
-where F is a distance function, N is the number of point annotations, and E[cn] is the sum of the posterior probabilities multiplied by the estimated density map.
+where F is a distance function, N is the number of point annotations, and E[cn] is the sum of the posterior probabilities multiplied by the estimated density map. The authors also purpose a modification to the loss function that makes it handle patches with background pixels better. This function is called Bayes+ and looks as follows:
+
+$$\mathcal{L}^{\text{Bayes+}} = \sum^{N}_{n=1}\mathcal{F}(1- E[c_n])
++ \mathcal{F}(0- E[c_0]),
+$$
+where $E[c_0]$ is the background count.
+
+
 They show that BL can reach state-of-the-art performance with only a simple network. We apply BL to the COWC dataset. To do this we use the code made publicly available by Ma et al. (2019).
 
 ## Method
@@ -87,13 +94,11 @@ After applying Bayesian Loss (BL) to the car counting task using the VGG-19 netw
 The table below presents the performance metrics obtained from the experiments conducted on the COWC dataset using different models and loss functions. The metrics included were influenced by the scene metrics from the original COWC paper as well as our personal judgment of what is important.
 
 
-| Model            | Changes            | mse    | mae    | mape (%) | predicted_cars | ground_truth_cars | max_precentage_error (%) | total_error | number_of_images |
-|------------------|--------------------|--------|--------|----------|----------------|-------------------|--------------------------|-------------|------------------|
-| VGG-19 (with BL) | Regular data loader| 10.55  | 5.78   | 13.68    | 7646.47        | 8059              | 278.85                   | -412.53     | 83               |
-| VGG-19 (with BL) | Modified data loader | 13.69 | 6.38   | 47.67   | 7923.85        | 8059              | 513.87                   | -135.16     | 83               |
-| VGG-19 (with BL) | No background      | 9.56   | 7.14   | 95.89   | 8449.36        | 8059              | 840.27                   | 390.36      | 83               |
-| VGG-19 (with MSE)| -                  | 32.99  | 23.41  | 105.14  | 8990.83        | 8059              | 1703.52                  | 931.83      | 83               |
-
+| Model            | MSE    | MAE    | MAE (%) | Max[MAE] (%) | Predicted Total | Total Error |
+|------------------|--------|--------|---------|--------------------------|-----------------|-------------|
+| MSE (baseline)   | 32.99  | 23.41  | 105.14  | 1703.52                  | 8991            | 932         |
+| BL               | **9.56**   | 7.14   | 95.89   | 840.27                   | 8449            | **390**         |
+| **BL+**              | 10.55  | **5.78**   | **13.68**   | **278.85**                   | 7646            | -413        |
 
 
 
@@ -186,3 +191,4 @@ We additionally made a bunch of modifications to the official Bayesian Loss for 
 We also ran some additional experiments that are not included in the report. These experiments are listed below:
 - We retrained the original Bayesian Loss model for 600 epochs on the crowd-counting UCF-QNRF dataset. The training took about 12 h. On the testing set, the model achieved mean absolute error of 91.5 and mean squared error 168.8 compared to the original paper's results of 88.7, and 154.8 respectively. The results are almost as good as the original paper and the difference is likely due to the fact that we trained for 600 epochs instead of 1000 epochs.
 - TODO: Data Loaders?
+| VGG-19 (with BL) | Modified data loader | 13.69 | 6.38   | 47.67   | 7923.85        | 8059              | 513.87                   | -135.16     | 83               |
