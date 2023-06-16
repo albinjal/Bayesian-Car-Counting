@@ -38,15 +38,13 @@ Authors
 - Tromp, Marije (4814495)
 
 ## Introduction
-The need for car counting is prevalent in our modern vehicle dependent society. There are many different scenarios in
+The need for car counting is prevalent in our modern vehicle-dependent society. There are many different scenarios in
 which it is important to know how many vehicles are in a certain area. Some of these include parking optimization,
-reducing congestion, and enhancing security. However, with the number the vast number of cars in the world it is not feasible
-to do this by hand. Instead we can use overhead imagery.
+reducing congestion, and enhancing security. However, with the number the vast number of cars in the world, it is not feasible
+to do this by hand. Instead, we can use overhead imagery.
 
 Overhead imagery provides a comprehensive and non-intrusive method for car counting. Using overhead images for this purpose
-is not a novel idea. An example of a method that uses these images is presented by Mundhenk et al. (2016). Their best performing method
-uses Residual Learning with Inception, called ResCeption, and is trained on 256x256 patches of larger images. Their approach takes in an
-image and gives the number of cars as output. To count cars in a larger image they had to divide it in patches, using a softmax with 64 outputs. This therefore means that
+is not a novel idea. An example of a method that uses these images is presented by Mundhenk et al. (2016). Their best-performing method uses Residual Learning with Inception, called ResCeption, and is trained on 256x256 patches of larger images. Their approach takes in an image and gives the number of cars as output. To count cars in a larger image they had to divide it into patches, using a softmax with 64 outputs. This, therefore, means that
 each patch can have a maximum of 64 cars in it.
 The authors trained and tested their method on a large publicly available set of overhead images containing cars called Cars Overhead with Context (COWC) that they created themselves.
 We use this same dataset for our project.
@@ -56,45 +54,43 @@ a bounding box for each car in an image. If one wanted to count the number of ca
 Other methods that count cars on different datasets include but are not limited to Froidevaux et al. (2020) who investigate 2 existing architectures and Liao et al. (2023) who present a new method for counting objects at a specific location.
 
 There are a few problems with the current methods. They use large networks, thus making them difficult to train with limited resources.
-Their frameworks are often intricate to allow for good performance, and are therefore likely task specific. Some require multiple types of data of the same location,
+Their frameworks are often intricate to allow for good performance and are therefore likely task-specific. Some require multiple types of data of the same location,
 or they can't take in large images and have to instead divide the image in patches. The latter can lead to counting errors when the car is divided over 2 or more patches.
-Lastly some also need tricks to be able to work. An example is the limiting of the maximum number of cars in a single patch to 64, like we mentioned earlier.
+Lastly, some also need tricks to be able to work. An example is the limiting of the maximum number of cars in a single patch to 64 as we mentioned earlier.
 
-In this project we use a different approach to car counting from overhead images, namely Bayesian Loss (BL) as presented by Ma et al. (2019). The authors created BL as an alternative to
-to the most common method for crowd counting, namely density map estimation. They state that using density maps ground-truth is very
-susceptible to errors because of many reasons, for example occlusions. The authors explain that BL converts the point annotations into a density contribution
-probability model, using the annotations as priors instead of ground-truth. According to them this mitigates the mentioned problems.
-In their paper they show that since the BL looks as follows:
+In this project, we use a different approach to car counting from overhead images, namely Bayesian Loss (BL) as presented by Ma et al. (2019). The authors created BL as an alternative to the most common method for crowd counting, namely density map estimation. They state that using density maps ground-truth is very
+susceptible to errors because of many reasons, for example, occlusions. The authors explain that BL converts the point annotations into a density contribution
+probability model, using the annotations as priors instead of ground truth. According to them, this mitigates the mentioned problems.
+In their paper, they show that since the BL looks as follows:
 $$\mathcal{L}^{\text{Bayes}} = \sum^{N}_{n=1}\mathcal{F}(1- E[c_n])$$
 
-where F is a distance function, N is the number of point annotations, and E[cn] is the sum of the posterior probabilities multiplied with the estimated density map.
-They show that BL is able to reach state-of-the-art performance with only a simple network. We apply BL to the COWC dataset. To do this we use the code made publicly available by Ma et al. (2019).
+where F is a distance function, N is the number of point annotations, and E[cn] is the sum of the posterior probabilities multiplied by the estimated density map.
+They show that BL can reach state-of-the-art performance with only a simple network. We apply BL to the COWC dataset. To do this we use the code made publicly available by Ma et al. (2019).
 
 ## Method
 To apply BL to the car counting task we used the publicly available codebase from Ma et al. (2019), which contains the code for all steps necessary to
 train and test a model that can count cars in images. Their code uses the VGG-19 network and includes support for the 2 different
 image datasets they used in their paper.
 
-During preprocessing their code calculates the mean distance to the closest three annotation to try and measure how big the
-object is. During training this value is clipped to a value that could realistically make sense, which is a main difference
-between the support for the 2 different classes.
+During preprocessing their code calculates the mean distance to the closest three annotations to try and measure how big the
+object is. During training, this value is clipped to a value that could realistically make sense, which is the main difference between the support for the 2 different classes.
 
-In this project we used the new COWC dataset instead of these 2 classes. We trained models using the support for both datasets using
+In this project, we used the new COWC dataset instead of these 2 classes. We trained models using the support for both datasets using
 VGG-19, a version of one of the supports using different clip values that could make more sense for the COWC dataset, and
 the combination of one of the supports and AlexNet instead of VGG-19. To be able to quantify the results of our experiments we also investigated using VGG-19 with Mean Squared Error (MSE) loss as a baseline.
 
-The Mean Squared Error baseline adaptaion was constructed by applying an additional fully connected layer to the end of the standard VGG-19 network to directly estimate the number of cars in a scene. The MSE loss was then calculated between the estimated number of cars and the ground truth number of cars. It is important to note that the MSE network is trained on only the number of cars in the patches while the BL networks also trains on the exact position of the cars in the patches.
+The Mean Squared Error baseline adaptation was constructed by applying an additional fully connected layer to the end of the standard VGG-19 network to directly estimate the number of cars in a scene. The MSE loss was then calculated between the estimated number of cars and the ground truth number of cars. It is important to note that the MSE network is trained on only the number of cars in the patches while the BL networks also train on the exact position of the cars in the patches.
 
 ## Results
 After applying Bayesian Loss (BL) to the car counting task using the VGG-19 network, we conducted experiments on the Cars Overhead with Context (COWC) dataset. We compared our results with the baseline model using Mean Squared Error (MSE) loss. Additionally, we trained models using different clip values that could better suit the characteristics of the COWC dataset. We also explored the combination of one of the supports with AlexNet instead of VGG-19. In this section, we present the performance metrics obtained from these experiments and analyze the effectiveness of BL in achieving accurate car counting results.
 
-The table below presents the performance metrics obtained from the experiments conducted on the COWC dataset using different models and loss functions. The metrics included was influenced by the scene metrics from the original COWC paper as well as our personal judgement of what is important.
+The table below presents the performance metrics obtained from the experiments conducted on the COWC dataset using different models and loss functions. The metrics included were influenced by the scene metrics from the original COWC paper as well as our personal judgment of what is important.
 
 
 | Model            | Changes            | mse    | mae    | mape (%) | predicted_cars | ground_truth_cars | max_precentage_error (%) | total_error | number_of_images |
 |------------------|--------------------|--------|--------|----------|----------------|-------------------|--------------------------|-------------|------------------|
 | VGG-19 (with BL) | Regular data loader| 10.55  | 5.78   | 13.68    | 7646.47        | 8059              | 278.85                   | -412.53     | 83               |
-| VGG-19 (with BL) | Crowd_sh data loader | 13.69 | 6.38   | 47.67   | 7923.85        | 8059              | 513.87                   | -135.16     | 83               |
+| VGG-19 (with BL) | Modified data loader | 13.69 | 6.38   | 47.67   | 7923.85        | 8059              | 513.87                   | -135.16     | 83               |
 | VGG-19 (with BL) | No background      | 9.56   | 7.14   | 95.89   | 8449.36        | 8059              | 840.27                   | 390.36      | 83               |
 | VGG-19 (with MSE)| -                  | 32.99  | 23.41  | 105.14  | 8990.83        | 8059              | 1703.52                  | 931.83      | 83               |
 
@@ -102,7 +98,8 @@ The table below presents the performance metrics obtained from the experiments c
 
 
 
-### Problems
+### VGG-19 with Bayesian Loss
+The best results were achieved when using the regular data loader and taking the background into account (Bayes+). When inspecting the results closer, we found that some of the configurations struggle with scenes where there are very few cars in particular. These scenes have a large proportion of background and the model that does not take this into account inherently struggles.
 
 
 ### Baysian Loss vs Mean Squared Error
@@ -110,7 +107,7 @@ The results clearly demonstrate the superior performance of VGG-19 with Bayesian
 
 The predicted car count of 7924 closely aligns with the ground truth count of 8059, resulting in a maximum percentage error of -135 %. In contrast, VGG-19 with MSE exhibits higher prediction errors, as indicated by its higher MSE of 33. Its MAE of 23.4 and MAPE of 105 % also highlight its suboptimal precision.
 
-It is important to note that while a direct comparision between the performances of the two models is possible, it may not be the most fair. The MSE model is trained on only the number of cars in the patches while the BL model also trains on the exact position of the cars in the patches. This means that the BL model has more information to train on and should be able to achieve better results. However, since the MSE model uses a linear layer at the end, it is not as flexible with the size of the input images as the one used in the BL model. The ability to adapt to different patch sizes is one of the main benefits of the BL model.
+It is important to note that while a direct comparison between the performances of the two models is possible, it may not be the most fair. The MSE model is trained on only the number of cars in the patches while the BL model also trains on the exact position of the cars in the patches. This means that the BL model has more information to train on and should be able to achieve better results. However, since the MSE model uses a linear layer at the end, it is not as flexible with the size of the input images as the one used in the BL model. The ability to adapt to different patch sizes is one of the main benefits of the BL model.
 ### Generalization
 The generalization of the model was evaluated using aerial images obtained from Google Earth of the TU Delft campus. We selected the three images for this.
 <p float="left">
@@ -119,11 +116,11 @@ The generalization of the model was evaluated using aerial images obtained from 
 </p>
 Image: Google ©2022 Landsat/Copernicus
 
-We selected this first image because in the right half of the image it includes a few cars that are almost entirely covered by trees.
-These cars are barely visible in the image, so therefore we did not include them in the ground truth, but we were curious if the model would be able
+We selected this first image because in the right half of the image, it includes a few cars that are almost entirely covered by trees.
+These cars are barely visible in the image, so, therefore, we did not include them in the ground truth, but we were curious if the model would be able
 to recognize them.
 
-In the right image we can see that the model was not able to recognize the cars that were covered by the trees, as we expected. It also missed 5 cars that we did count.
+In the right image, we can see that the model was not able to recognize the cars that were covered by the trees, as we expected. It also missed 5 cars that we did count.
 Most of the cars that it missed were partially covered by trees, which is most likely the reason that they were not counted. The only car that was not
 covered is the green one on the upper right.
 
@@ -135,7 +132,7 @@ Image: Google ©2022 Landsat/Copernicus
 
 We selected the second image because a small part of the image is relatively densely packed with cars, there is a large empty space,
 and there is a single car on a road. Therefore this image is able to show how the model performs on both dense and sparse areas. As we can see in the
-right image the models prediction is only 1 off of the actual ground truth. It is able to recognize both the dense and sparse ereas.
+right image the models' prediction is only 1 off of the actual ground truth. It is able to recognize both the dense and sparse areas.
 
 <p float="left">
     <img src="imgs/Google_earth_3.jpg" width="48%" />
@@ -145,7 +142,7 @@ Image: Google ©2022 Landsat/Copernicus
 
 We selected the third image because most of the image is relatively easy to count, but it does include a small strip of shadows in which 3 cars are located.
 One of these cars is black and therefore almost invisible in the shadow. It also includes a small cart. This image is therefore able
-to test how well the model is able to recognize cars while also not highlighting other objects.
+to test how well the model can recognize cars while also not highlighting other objects.
 
 As we can see in the right image the model is again almost spot on with its prediction. It predicts there to be one more car than there actually is, but it was able
 to highlight the black car in the shadow while also not highlighting the cart in the right upper corner.
@@ -172,9 +169,9 @@ Mundhenk, T. N., Konjevod, G., Sakla, W. A., & Boakye, K. (2016). A large contex
 
 Stuparu, D.-G., Ciobanu, R.-I., & Dobre, C. (2020). Vehicle Detection in Overhead Satellite Images Using a One-Stage Object Detection Model. Sensors, 20(22), 6485. https://doi.org/10.3390/s20226485
 
-## Appendix A: Code Modications
+## Appendix A: Code Modifications
 
-We additionally made a bunch of modifications to the official Bayesian Loss for Crowd Count Estimation with Point Supervision implementation. The modificaitons is spread out over multiple branches in our fork of the repository. Some changes are highlighted below:
+We additionally made a bunch of modifications to the official Bayesian Loss for Crowd Count Estimation with Point Supervision implementation. The modifications are spread out over multiple branches in our fork of the repository. Some changes are highlighted below:
 
 - Added support for converting the format of the COWC dataset to the format used by the original implementation.
 - Added support for debugging the dataset by inspecting the annotations overlayed on the images.
@@ -187,5 +184,5 @@ We additionally made a bunch of modifications to the official Bayesian Loss for 
 
 ## Appendix B: Additional Experiments
 We also ran some additional experiments that are not included in the report. These experiments are listed below:
-- We retrained the original Bayesian Loss model for 600 epochs on the crowd counting UCF-QNRF dataset. The training took about 12 h. On the testing set, the model achived mean absolute error of 91.5 and mean squared error 168.8 compared to the original paper's results of 88.7, and 154.8 respectively. The results are almost as good as the original paper and the difference is likely due to the fact that we trained for 600 epochs instead of 1000 epochs.
-- TODO: Data Loaders
+- We retrained the original Bayesian Loss model for 600 epochs on the crowd-counting UCF-QNRF dataset. The training took about 12 h. On the testing set, the model achieved mean absolute error of 91.5 and mean squared error 168.8 compared to the original paper's results of 88.7, and 154.8 respectively. The results are almost as good as the original paper and the difference is likely due to the fact that we trained for 600 epochs instead of 1000 epochs.
+- TODO: Data Loaders?
