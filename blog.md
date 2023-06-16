@@ -90,7 +90,7 @@ The Mean Squared Error baseline adaptation was constructed by applying an additi
 ## Results
 After applying Bayesian Loss (BL) to the car counting task using the VGG-19 network, we conducted experiments on the Cars Overhead with Context (COWC) dataset. We compared our results with the baseline model using Mean Squared Error (MSE) loss. Additionally, we trained models using different clip values that could better suit the characteristics of the COWC dataset. We also explored the combination of one of the supports with AlexNet instead of VGG-19. In this section, we present the performance metrics obtained from these experiments and analyze the effectiveness of BL in achieving accurate car counting results.
 
-The table below presents the performance metrics obtained from the experiments conducted on the COWC dataset using different models and loss functions. The metrics included were influenced by the scene metrics from the original COWC paper as well as our personal judgment of what is important.
+The table below presents the performance metrics obtained from the 3 main experiments conducted on the COWC dataset using different models and loss functions. The metrics included were influenced by the scene counting metrics from the original COWC paper as well as our personal judgment of what is important.
 
 
 | Model            | MSE    | MAE    | MAE (%) | Max[MAE] (%) | Predicted Total | Total Error |
@@ -99,8 +99,12 @@ The table below presents the performance metrics obtained from the experiments c
 | BL               | **9.56**   | 7.14   | 95.89   | 840.27                   | 8449            | **390**         |
 | **BL+**              | 10.55  | **5.78**   | **13.68**   | **278.85**                   | 7646            | -413        |
 
-All models use VGG-19 as backbone and the same data loader and dataset. The test sets consists of 83 images with a total of 8059 cars (~97 cars / image). The MSE model uses MSE as loss function, BL uses Bayesian Loss, and BL+ uses Bayesian Loss with background count. The best results are highlighted in bold.
+All models use VGG-19 as backbone and the same data loader and dataset. The test sets consist of 83 images with a total of 8059 cars (~97 cars / image). The MSE model uses MSE as loss function, BL uses Bayesian Loss, and BL+ uses Bayesian Loss with background count. The best results are highlighted in bold.
 
+### Baysian Loss vs Mean Squared Error
+The results show that the BL model outperforms the MSE model in essentially all metrics, especially, MSE and MAE. This is in line with our expectations.
+
+It is important to note that while a direct comparison between the performances of the two models is possible, it may not be the most fair. The MSE model is trained on only the number of cars in the patches while the BL model also trains on the exact position of the cars in the patches. This means that the BL model has more information to train on and should be able to achieve better results. However, since the MSE model uses a linear layer at the end, it is not as flexible with the size of the input images as the one used in the BL model. The ability to adapt to different patch sizes is one of the main benefits of the BL model.
 
 ### VGG-19 with Bayesian Loss
 The best results were achieved when using BL and taking the background into account (Bayes+). When inspecting the results closer, we found that some of the configurations struggle with scenes where there are very few cars in particular. These scenes have a large proportion of background and the model that does not take this into account inherently struggles.
@@ -108,21 +112,20 @@ The best results were achieved when using BL and taking the background into acco
 The following images are examples of how the model operates on different scenes. We have here overlayed the probability density map over the original image for better interpretation.
 
 #### Bayesian Loss
-We can observe that the default baysian loss performs relativly well on images with many cars, but struggles with images with few cars. This is because the model does not take the background into account, and therefore struggles with scenes with a large proportion of background.
-![BL](imgs/no_bgpatch_11_37.png)
-![BL](imgs/no_bgpatch_15_1.png)
+We can observe that the default Bayesian loss performs relatively well on images with many cars, but struggles with images with few cars. This is because the model does not take the background into account, and therefore struggles with scenes with a large proportion of background.
+
+<p float="left">
+    <img src="imgs/no_bgpatch_11_37.png" width="48%" />
+    <img src="imgs/no_bgpatch_15_1.png" width="48%" />
+</p>
 
 #### Bayesian Loss with background count (Bayes+)
-The Bayes+ model performs well on both images with many cars and images with few cars. This is because the model takes the background into account, and therefore also performs well on scenes with a large proportion of background. We belive this is the main reason why the Bayes+ model on average performs better than the default Bayes model.
-![BL](imgs/patch_11_37.png)
-![BL](imgs/patch_15_1.png)
+The Bayes+ model performs well on both images with many cars and images with few cars. This is because the model takes the background into account, and therefore also performs well on scenes with a large proportion of background. This is also supported by the fact that absolute MSE and MAE values are very similar for the two models but for percentage errors, the difference is clear. We believe this is the main reason why the Bayes+ model on average performs better than the default Bayes model.
+<p float="left">
+    <img src="imgs/patch_11_37.png" width="48%" />
+    <img src="imgs/patch_15_1.png" width="48%" />
+</p>
 
-### Baysian Loss vs Mean Squared Error
-The results clearly demonstrate the superior performance of VGG-19 with Bayesian Loss (BL) compared to VGG-19 with Mean Squared Error (MSE) as the loss function. BL consistently outperforms MSE in all evaluated metrics, including MSE, MAE, and MAPE, indicating better accuracy and precision in predicting car counts. BL achieves a significantly lower MSE value of 13.7, while its MAE of 6.4 and MAPE of 48% further showcase its superior performance.
-
-The predicted car count of 7924 closely aligns with the ground truth count of 8059, resulting in a maximum percentage error of -135 %. In contrast, VGG-19 with MSE exhibits higher prediction errors, as indicated by its higher MSE of 33. Its MAE of 23.4 and MAPE of 105 % also highlight its suboptimal precision.
-
-It is important to note that while a direct comparison between the performances of the two models is possible, it may not be the most fair. The MSE model is trained on only the number of cars in the patches while the BL model also trains on the exact position of the cars in the patches. This means that the BL model has more information to train on and should be able to achieve better results. However, since the MSE model uses a linear layer at the end, it is not as flexible with the size of the input images as the one used in the BL model. The ability to adapt to different patch sizes is one of the main benefits of the BL model.
 ### Generalization
 The generalization of the model was evaluated using aerial images obtained from Google Earth of the TU Delft campus. We selected the three images for this.
 <p float="left">
