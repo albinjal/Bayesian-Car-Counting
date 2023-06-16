@@ -91,12 +91,13 @@ After applying Bayesian Loss (BL) to the car counting task using the VGG-19 netw
 The table below presents the performance metrics obtained from the experiments conducted on the COWC dataset using different models and loss functions. The metrics included was influenced by the scene metrics from the original COWC paper as well as our personal judgement of what is important.
 
 
-|      Model      |    Changes    |  mse      |   mae    |    mape       | predicted_cars   | ground_truth_cars | max_precentage_error | total_error | number_of_images |
-|-----------------|-------------|----------|----------|---------------|------------------|-------------------|----------------------|--------------|------------------|
-| VGG-19 (with BL)| Regular data loader | 10.549   | 5.776    | 13.678 %      | 7646.473         | 8059              | 278.845 %            | -412.527     | 83               |
-| VGG-19 (with BL)| Crowd_sh data loader | 13.690   | 6.375    | 47.673 %      | 7923.845         | 8059              | 513.869 %            | -135.155     | 83               |
-| VGG-19 (with BL)| No background       | 9.559    | 7.138    | 95.885 %      | 8449.360         | 8059              | 840.272 %            | 390.360      | 83               |
-| VGG-19 (with MSE)| -          | 32.986   | 23.407   | 105.143 %     | 8990.832         | 8059              | 1703.518 %            | 931.832      | 83               |
+| Model            | Changes            | mse    | mae    | mape (%) | predicted_cars | ground_truth_cars | max_precentage_error (%) | total_error | number_of_images |
+|------------------|--------------------|--------|--------|----------|----------------|-------------------|--------------------------|-------------|------------------|
+| VGG-19 (with BL) | Regular data loader| 10.55  | 5.78   | 13.68    | 7646.47        | 8059              | 278.85                   | -412.53     | 83               |
+| VGG-19 (with BL) | Crowd_sh data loader | 13.69 | 6.38   | 47.67   | 7923.85        | 8059              | 513.87                   | -135.16     | 83               |
+| VGG-19 (with BL) | No background      | 9.56   | 7.14   | 95.89   | 8449.36        | 8059              | 840.27                   | 390.36      | 83               |
+| VGG-19 (with MSE)| -                  | 32.99  | 23.41  | 105.14  | 8990.83        | 8059              | 1703.52                  | 931.83      | 83               |
+
 
 
 
@@ -105,7 +106,7 @@ The table below presents the performance metrics obtained from the experiments c
 
 
 ### Baysian Loss vs Mean Squared Error
-The results clearly demonstrate the superior performance of VGG-19 with Bayesian Loss (BL) compared to VGG-19 with Mean Squared Error (MSE) as the loss function. BL consistently outperforms MSE in all evaluated metrics, including MSE, MAE, and MAPE, indicating better accuracy and precision in predicting car counts. BL achieves a significantly lower MSE value of 13.690, while its MAE of 6.4 and MAPE of 48% further showcase its superior performance.
+The results clearly demonstrate the superior performance of VGG-19 with Bayesian Loss (BL) compared to VGG-19 with Mean Squared Error (MSE) as the loss function. BL consistently outperforms MSE in all evaluated metrics, including MSE, MAE, and MAPE, indicating better accuracy and precision in predicting car counts. BL achieves a significantly lower MSE value of 13.7, while its MAE of 6.4 and MAPE of 48% further showcase its superior performance.
 
 The predicted car count of 7924 closely aligns with the ground truth count of 8059, resulting in a maximum percentage error of -135 %. In contrast, VGG-19 with MSE exhibits higher prediction errors, as indicated by its higher MSE of 33. Its MAE of 23.4 and MAPE of 105 % also highlight its suboptimal precision.
 
