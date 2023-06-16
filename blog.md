@@ -55,13 +55,12 @@ During preprocessing their code calculates the mean distance to the closest thre
 object is. During training, this value is clipped to a value that could realistically make sense, which is the main difference between the support for the 2 different classes.
 
 In this project, we used the new COWC dataset instead of these 2 classes. We trained models using the support for both datasets using
-VGG-19, a version of one of the supports using different clip values that could make more sense for the COWC dataset, and
-the combination of one of the supports and AlexNet instead of VGG-19. To be able to quantify the results of our experiments we also investigated using VGG-19 with Mean Squared Error (MSE) loss as a baseline.
+VGG-19, a version of one of the supports using different clip values that could make more sense for the COWC dataset. To be able to quantify the results of our experiments we also investigated using VGG-19 with Mean Squared Error (MSE) loss as a baseline.
 
 The Mean Squared Error baseline adaptation was constructed by applying an additional fully connected layer to the end of the standard VGG-19 network to directly estimate the number of cars in a scene. The MSE loss was then calculated between the estimated number of cars and the ground truth number of cars. It is important to note that the MSE network is trained on only the number of cars in the patches while the BL networks also train on the exact position of the cars in the patches.
 
 ## Results
-After applying Bayesian Loss (BL) to the car counting task using the VGG-19 network, we conducted experiments on the Cars Overhead with Context (COWC) dataset. We compared our results with the baseline model using Mean Squared Error (MSE) loss. Additionally, we trained models using different clip values that could better suit the characteristics of the COWC dataset. We also explored the combination of one of the supports with AlexNet instead of VGG-19. In this section, we present the performance metrics obtained from these experiments and analyze the effectiveness of BL in achieving accurate car counting results.
+After applying Bayesian Loss (BL) to the car counting task using the VGG-19 network, we conducted experiments on the Cars Overhead with Context (COWC) dataset. We compared our results with the baseline model using Mean Squared Error (MSE) loss. Additionally, we trained models using different clip values that could better suit the characteristics of the COWC dataset. In this section, we present the performance metrics obtained from these experiments and analyze the effectiveness of BL in achieving accurate car counting results.
 
 The table below presents the performance metrics obtained from the 3 main experiments conducted on the COWC dataset using different models and loss functions. The metrics included were influenced by the scene counting metrics from the original COWC paper as well as our judgment of what is important.
 
@@ -168,7 +167,6 @@ We additionally made a bunch of modifications to the official Bayesian Loss for 
 
 - Added support for converting the format of the COWC dataset to the format used by the original implementation.
 - Added support for debugging the dataset by inspecting the annotations overlayed on the images.
-- Added support for using AlexNet instead of VGG-19.
 - Modified the model to support direct count regression instead of density map estimation.
 - Added support for training on Mac GPUs (MPS) instead of only CUDA GPUs.
 - Added support for testing .tar checkpoint files and not only .pth files.
