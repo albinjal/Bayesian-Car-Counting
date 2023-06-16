@@ -90,21 +90,22 @@ The Mean Squared Error baseline adaptation was constructed by applying an additi
 ## Results
 After applying Bayesian Loss (BL) to the car counting task using the VGG-19 network, we conducted experiments on the Cars Overhead with Context (COWC) dataset. We compared our results with the baseline model using Mean Squared Error (MSE) loss. Additionally, we trained models using different clip values that could better suit the characteristics of the COWC dataset. We also explored the combination of one of the supports with AlexNet instead of VGG-19. In this section, we present the performance metrics obtained from these experiments and analyze the effectiveness of BL in achieving accurate car counting results.
 
-The table below presents the performance metrics obtained from the 3 main experiments conducted on the COWC dataset using different models and loss functions. The metrics included were influenced by the scene counting metrics from the original COWC paper as well as our personal judgment of what is important.
+The table below presents the performance metrics obtained from the 3 main experiments conducted on the COWC dataset using different models and loss functions. The metrics included were influenced by the scene counting metrics from the original COWC paper as well as our judgment of what is important.
 
 
 | Model            | MSE    | MAE    | MAE (%) | Max[MAE] (%) | Predicted Total | Total Error |
 |------------------|--------|--------|---------|--------------------------|-----------------|-------------|
 | MSE (baseline)   | 32.99  | 23.41  | 105.14  | 1703.52                  | 8991            | 932         |
 | BL               | **9.56**   | 7.14   | 95.89   | 840.27                   | 8449            | **390**         |
-| **BL+**              | 10.55  | **5.78**   | **13.68**   | **278.85**                   | 7646            | -413        |
+| BL+              | 10.55  | **5.78**   | **13.68**   | **278.85**                   | 7646            | -413        |
 
 All models use VGG-19 as backbone and the same data loader and dataset. The test sets consist of 83 images with a total of 8059 cars (~97 cars / image). The MSE model uses MSE as loss function, BL uses Bayesian Loss, and BL+ uses Bayesian Loss with background count. The best results are highlighted in bold.
 
+The MAE (%) is the average absolute error in percentage of the total number of cars in the image. The Max[MAE] (%) is the highest MAE (%) across all images. Both BL and BL+ were trained for 500 epochs while the MSE model was trained for 100 epochs due to longer training time.
 ### Baysian Loss vs Mean Squared Error
 The results show that the BL model outperforms the MSE model in essentially all metrics, especially, MSE and MAE. This is in line with our expectations.
 
-It is important to note that while a direct comparison between the performances of the two models is possible, it may not be the most fair. The MSE model is trained on only the number of cars in the patches while the BL model also trains on the exact position of the cars in the patches. This means that the BL model has more information to train on and should be able to achieve better results. However, since the MSE model uses a linear layer at the end, it is not as flexible with the size of the input images as the one used in the BL model. The ability to adapt to different patch sizes is one of the main benefits of the BL model.
+It is important to note that while a direct comparison between the performances of the two models is possible, it may not be the most fair. The MSE model is trained on only the number of cars in the patches while the BL model also trains on the exact position of the cars in the patches. This means that the BL model has more information to train on and should be able to achieve better results. However, since the MSE model uses a linear layer at the end, it is not as flexible with the size of the input images as the one used in the BL model. The ability to adapt to different patch sizes is one of the main benefits of the BL model. The shorter training time for the BL model is also an advantage.
 
 ### VGG-19 with Bayesian Loss
 The best results were achieved when using BL and taking the background into account (Bayes+). When inspecting the results closer, we found that some of the configurations struggle with scenes where there are very few cars in particular. These scenes have a large proportion of background and the model that does not take this into account inherently struggles.
@@ -169,6 +170,7 @@ Remarkably, the model performed exceptionally well in accurately counting cars i
 
 ## Conclusion
 In conclusion, the utilization of Bayesian Loss (BL) in the VGG-19 model significantly improves its performance in car counting tasks. BL consistently outperformed the traditional Mean Squared Error (MSE) loss function, demonstrating superior accuracy, precision, and percentage error metrics. Moreover, the model showcased impressive generalization capabilities, successfully counting cars in overhead images obtained from various sources, including the TU Delft campus on Google Earth. This ability to generalize to different overhead images highlights the model's adaptability and effectiveness in real-world scenarios. By leveraging BL and its robust generalization, we have laid a solid foundation for accurate and efficient car counting in diverse environments, opening doors to a wide range of applications such as parking optimization, congestion management, and enhanced security.
+
 Additionally, it is worth noting that the model's performance is particularly impressive when dealing with images containing a significant number of cars. In such cases, the model consistently achieves higher accuracy and lower error rates. However, it is important to acknowledge that the model's performance tends to degrade when confronted with images depicting a relatively small number of cars, particularly fewer than 10 cars. This limitation suggests the need for further exploration and refinement of the model to enhance its precision in accurately counting sparse car instances.
 
 
@@ -203,5 +205,8 @@ We additionally made a bunch of modifications to the official Bayesian Loss for 
 ## Appendix B: Additional Experiments
 We also ran some additional experiments that are not included in the report. These experiments are listed below:
 - We retrained the original Bayesian Loss model for 600 epochs on the crowd-counting UCF-QNRF dataset. The training took about 12 h. On the testing set, the model achieved mean absolute error of 91.5 and mean squared error 168.8 compared to the original paper's results of 88.7, and 154.8 respectively. The results are almost as good as the original paper and the difference is likely due to the fact that we trained for 600 epochs instead of 1000 epochs.
-- TODO: Data Loaders?
-| VGG-19 (with BL) | Modified data loader | 13.69 | 6.38   | 47.67   | 7923.85        | 8059              | 513.87                   | -135.16     | 83               |
+- We also experiment with different using different data loaders for loading the data. When using a modified data loader, the results were slightly worse than when using the original data loader. The results are shown in the table below.
+
+| Model            | MSE    | MAE    | MAE (%) | Max[MAE] (%) | Predicted Total | Total Error |
+|------------------|--------|--------|---------|--------------------------|-----------------|-------------|
+| VGG-19 (with BL) | 13.69 | 6.38   | 47.67  | 513.87 | 7923                | -135.16
