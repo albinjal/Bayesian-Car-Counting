@@ -100,18 +100,21 @@ The table below presents the performance metrics obtained from the experiments c
 | BL               | **9.56**   | 7.14   | 95.89   | 840.27                   | 8449            | **390**         |
 | **BL+**              | 10.55  | **5.78**   | **13.68**   | **278.85**                   | 7646            | -413        |
 
-All models use VGG-19 as backbone and the same data loader and dataset. The test sets consists of 83 images with a total of 8059 cars. The MSE model uses MSE as loss function, BL uses Bayesian Loss, and BL+ uses Bayesian Loss with background count. The best results are highlighted in bold.
-
+All models use VGG-19 as backbone and the same data loader and dataset. The test sets consists of 83 images with a total of 8059 cars (~97 cars / image). The MSE model uses MSE as loss function, BL uses Bayesian Loss, and BL+ uses Bayesian Loss with background count. The best results are highlighted in bold.
 
 
 ### VGG-19 with Bayesian Loss
-The best results were achieved when using the regular data loader and taking the background into account (Bayes+). When inspecting the results closer, we found that some of the configurations struggle with scenes where there are very few cars in particular. These scenes have a large proportion of background and the model that does not take this into account inherently struggles.
+The best results were achieved when using BL and taking the background into account (Bayes+). When inspecting the results closer, we found that some of the configurations struggle with scenes where there are very few cars in particular. These scenes have a large proportion of background and the model that does not take this into account inherently struggles.
 
-BL
+The following images are examples of how the model operates on different scenes. We have here overlayed the probability density map over the original image for better interpretation.
+
+#### Bayesian Loss
+We can observe that the default baysian loss performs relativly well on images with many cars, but struggles with images with few cars. This is because the model does not take the background into account, and therefore struggles with scenes with a large proportion of background.
 ![BL](imgs/no_bgpatch_11_37.png)
 ![BL](imgs/no_bgpatch_15_1.png)
 
-BL+ (with background count)
+#### Bayesian Loss with background count (Bayes+)
+The Bayes+ model performs well on both images with many cars and images with few cars. This is because the model takes the background into account, and therefore also performs well on scenes with a large proportion of background. We belive this is the main reason why the Bayes+ model on average performs better than the default Bayes model.
 ![BL](imgs/patch_11_37.png)
 ![BL](imgs/patch_15_1.png)
 
