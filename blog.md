@@ -61,13 +61,12 @@ Lastly, some also need tricks to be able to work. An example is the limiting of 
 In this project, we use a different approach to car counting from overhead images, namely Bayesian Loss (BL) as presented by Ma et al. (2019). The authors created BL as an alternative to the most common method for crowd counting, namely density map estimation. They state that using density maps ground-truth is very
 susceptible to errors because of many reasons, for example, occlusions. The authors explain that BL converts the point annotations into a density contribution
 probability model, using the annotations as priors instead of ground truth. According to them, this mitigates the mentioned problems.
-In their paper, they show that since the BL looks as follows:
+In their paper, the BL looks as follows:
 $$\mathcal{L}^{\text{Bayes}} = \sum^{N}_{n=1}\mathcal{F}(1- E[c_n]),$$
 
 where F is a distance function, N is the number of point annotations, and E[cn] is the sum of the posterior probabilities multiplied by the estimated density map. The authors also purpose a modification to the loss function that makes it handle patches with background pixels better. This function is called Bayes+ and looks as follows:
 
-$$\mathcal{L}^{\text{Bayes+}} = \sum^{N}_{n=1}\mathcal{F}(1- E[c_n])
-+ \mathcal{F}(0- E[c_0]),$$
+$$\mathcal{L}^{\text{Bayes+}} = \sum^{N}_{n=1}\mathcal{F}(1- E[c_n]) + \mathcal{F}(0- E[c_0]),$$
 
 where $E[c_0]$ is the background count.
 
