@@ -67,8 +67,8 @@ $$\mathcal{L}^{\text{Bayes}} = \sum^{N}_{n=1}\mathcal{F}(1- E[c_n]),$$
 where F is a distance function, N is the number of point annotations, and E[cn] is the sum of the posterior probabilities multiplied by the estimated density map. The authors also purpose a modification to the loss function that makes it handle patches with background pixels better. This function is called Bayes+ and looks as follows:
 
 $$\mathcal{L}^{\text{Bayes+}} = \sum^{N}_{n=1}\mathcal{F}(1- E[c_n])
-+ \mathcal{F}(0- E[c_0]),
-$$
++ \mathcal{F}(0- E[c_0]),$$
+
 where $E[c_0]$ is the background count.
 
 
