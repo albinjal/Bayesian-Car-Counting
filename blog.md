@@ -81,12 +81,14 @@ between the support for the 2 different classes.
 
 In this project we used the new COWC dataset instead of these 2 classes. We trained models using the support for both datasets using
 VGG-19, a version of one of the supports using different clip values that could make more sense for the COWC dataset, and
-the combination of one of the supports and AlexNet instead of VGG-19. To be able to quantify the results of our experiments we used VGG-19 with Mean Squared Error (MSE) loss as a baseline.
+the combination of one of the supports and AlexNet instead of VGG-19. To be able to quantify the results of our experiments we also investigated using VGG-19 with Mean Squared Error (MSE) loss as a baseline.
+
+The Mean Squared Error baseline adaptaion was constructed by applying an additional fully connected layer to the end of the standard VGG-19 network to directly estimate the number of cars in a scene. The MSE loss was then calculated between the estimated number of cars and the ground truth number of cars. It is important to note that the MSE network is trained on only the number of cars in the patches while the BL networks also trains on the exact position of the cars in the patches.
 
 ## Results
 After applying Bayesian Loss (BL) to the car counting task using the VGG-19 network, we conducted experiments on the Cars Overhead with Context (COWC) dataset. We compared our results with the baseline model using Mean Squared Error (MSE) loss. Additionally, we trained models using different clip values that could better suit the characteristics of the COWC dataset. We also explored the combination of one of the supports with AlexNet instead of VGG-19. In this section, we present the performance metrics obtained from these experiments and analyze the effectiveness of BL in achieving accurate car counting results.
 
-The table below presents the performance metrics obtained from the experiments conducted on the COWC dataset using different models and loss functions.
+The table below presents the performance metrics obtained from the experiments conducted on the COWC dataset using different models and loss functions. The metrics included was influenced by the scene metrics from the original COWC paper as well as our personal judgement of what is important.
 
 
 |      Model      |    Changes    |  mse      |   mae    |    mape       | predicted_cars   | ground_truth_cars | max_precentage_error | total_error | number_of_images |
@@ -97,28 +99,17 @@ The table below presents the performance metrics obtained from the experiments c
 | VGG-19 (with MSE)| -          | 32.986   | 23.407   | 105.143 %     | 8990.832         | 8059              | 1703.518 %            | 931.832      | 83               |
 
 
-- Combined results and discussion
-Result from standard BL with VGG-19 and crowd_sh loader
-Good:
-![Results](imgs/patch_11_37.png)
-Bad:
-![Results](imgs/patch_15_1.png)
-
-Total res
-mse: 13.68982433593867, mae: 6.3752776312540815, mape: 47.67265583016418 %, predicted_cars: 7923.844641447067, ground_truth_cars: 8059,
-max_precentage_error: 513.8685703277588 %, total_error: -135.15535855293274, number_of_images: 83
 
 
 ### Problems
 
 
-### Networks
-The results clearly demonstrate the superior performance of VGG-19 with Bayesian Loss (BL) compared to VGG-19 with Mean Squared Error (MSE) as the loss function. BL consistently outperforms MSE in all evaluated metrics, including MSE, MAE, and MAPE, indicating better accuracy and precision in predicting car counts. BL achieves a significantly lower MSE value of 13.690, while its MAE of 6.375 and MAPE of 47.673% further showcase its superior performance.
+### Baysian Loss vs Mean Squared Error
+The results clearly demonstrate the superior performance of VGG-19 with Bayesian Loss (BL) compared to VGG-19 with Mean Squared Error (MSE) as the loss function. BL consistently outperforms MSE in all evaluated metrics, including MSE, MAE, and MAPE, indicating better accuracy and precision in predicting car counts. BL achieves a significantly lower MSE value of 13.690, while its MAE of 6.4 and MAPE of 48% further showcase its superior performance.
 
-The predicted car count of 7923.845 closely aligns with the ground truth count of 8059, resulting in a maximum percentage error of -135.155%. In contrast, VGG-19 with MSE exhibits higher prediction errors, as indicated by its higher MSE of 32.986. Its MAE of 23.407 and MAPE of 105.143% also highlight its suboptimal precision.
+The predicted car count of 7924 closely aligns with the ground truth count of 8059, resulting in a maximum percentage error of -135 %. In contrast, VGG-19 with MSE exhibits higher prediction errors, as indicated by its higher MSE of 33. Its MAE of 23.4 and MAPE of 105 % also highlight its suboptimal precision.
 
-The results confirm the effectiveness of BL in minimizing counting inaccuracies, aligning with our expectations.
-
+It is important to note that while a direct comparision between the performances of the two models is possible, it may not be the most fair. The MSE model is trained on only the number of cars in the patches while the BL model also trains on the exact position of the cars in the patches. This means that the BL model has more information to train on and should be able to achieve better results. However, since the MSE model uses a linear layer at the end, it is not as flexible with the size of the input images as the one used in the BL model. The ability to adapt to different patch sizes is one of the main benefits of the BL model.
 ### Generalization
 The generalization of the model was evaluated using aerial images obtained from Google Earth of the TU Delft campus. We selected the three images for this.
 <p float="left">
@@ -127,12 +118,12 @@ The generalization of the model was evaluated using aerial images obtained from 
 </p>
 Image: Google ©2022 Landsat/Copernicus
 
-We selected this first image because in the right half of the image it includes a few cars that are almost entirely covered by trees. 
-These cars are barely visible in the image, so therefore we did not include them in the ground truth, but we were curious if the model would be able 
-to recognize them. 
+We selected this first image because in the right half of the image it includes a few cars that are almost entirely covered by trees.
+These cars are barely visible in the image, so therefore we did not include them in the ground truth, but we were curious if the model would be able
+to recognize them.
 
 In the right image we can see that the model was not able to recognize the cars that were covered by the trees, as we expected. It also missed 5 cars that we did count.
-Most of the cars that it missed were partially covered by trees, which is most likely the reason that they were not counted. The only car that was not 
+Most of the cars that it missed were partially covered by trees, which is most likely the reason that they were not counted. The only car that was not
 covered is the green one on the upper right.
 
 <p float="left">
@@ -141,9 +132,9 @@ covered is the green one on the upper right.
 </p>
 Image: Google ©2022 Landsat/Copernicus
 
-We selected the second image because a small part of the image is relatively densely packed with cars, there is a large empty space, 
+We selected the second image because a small part of the image is relatively densely packed with cars, there is a large empty space,
 and there is a single car on a road. Therefore this image is able to show how the model performs on both dense and sparse areas. As we can see in the
-right image the models prediction is only 1 off of the actual ground truth. It is able to recognize both the dense and sparse ereas. 
+right image the models prediction is only 1 off of the actual ground truth. It is able to recognize both the dense and sparse ereas.
 
 <p float="left">
     <img src="imgs/Google_earth_3.jpg" width="48%" />
@@ -152,11 +143,11 @@ right image the models prediction is only 1 off of the actual ground truth. It i
 Image: Google ©2022 Landsat/Copernicus
 
 We selected the third image because most of the image is relatively easy to count, but it does include a small strip of shadows in which 3 cars are located.
-One of these cars is black and therefore almost invisible in the shadow. It also includes a small cart. This image is therefore able 
-to test how well the model is able to recognize cars while also not highlighting other objects. 
+One of these cars is black and therefore almost invisible in the shadow. It also includes a small cart. This image is therefore able
+to test how well the model is able to recognize cars while also not highlighting other objects.
 
 As we can see in the right image the model is again almost spot on with its prediction. It predicts there to be one more car than there actually is, but it was able
-to highlight the black car in the shadow while also not highlighting the cart in the right upper corner. 
+to highlight the black car in the shadow while also not highlighting the cart in the right upper corner.
 
 Remarkably, the model performed exceptionally well in accurately counting cars in these images. The accompanying density maps visually depict the distribution of cars within the campus, while the model's predicted car count provides a quantitative estimation. The density maps demonstrate that the model successfully captures the areas with higher car density, aligning closely with the ground truth counts. This outcome indicates that the model can effectively generalize its car counting capability to new and diverse aerial images, showcasing its robustness and versatility in different contexts.
 
@@ -197,4 +188,3 @@ We additionally made a bunch of modifications to the official Bayesian Loss for 
 We also ran some additional experiments that are not included in the report. These experiments are listed below:
 - We retrained the original Bayesian Loss model for 600 epochs on the crowd counting UCF-QNRF dataset. The training took about 12 h. On the testing set, the model achived mean absolute error of 91.5 and mean squared error 168.8 compared to the original paper's results of 88.7, and 154.8 respectively. The results are almost as good as the original paper and the difference is likely due to the fact that we trained for 600 epochs instead of 1000 epochs.
 - TODO: Data Loaders
-
