@@ -107,6 +107,13 @@ All models use VGG-19 as backbone and the same data loader and dataset. The test
 ### VGG-19 with Bayesian Loss
 The best results were achieved when using the regular data loader and taking the background into account (Bayes+). When inspecting the results closer, we found that some of the configurations struggle with scenes where there are very few cars in particular. These scenes have a large proportion of background and the model that does not take this into account inherently struggles.
 
+BL
+![BL](imgs/no_bgpatch_11_37.png)
+![BL](imgs/no_bgpatch_15_1.png)
+
+BL+ (with background count)
+![BL](imgs/patch_11_37.png)
+![BL](imgs/patch_15_1.png)
 
 ### Baysian Loss vs Mean Squared Error
 The results clearly demonstrate the superior performance of VGG-19 with Bayesian Loss (BL) compared to VGG-19 with Mean Squared Error (MSE) as the loss function. BL consistently outperforms MSE in all evaluated metrics, including MSE, MAE, and MAPE, indicating better accuracy and precision in predicting car counts. BL achieves a significantly lower MSE value of 13.7, while its MAE of 6.4 and MAPE of 48% further showcase its superior performance.
