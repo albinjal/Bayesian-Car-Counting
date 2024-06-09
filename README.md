@@ -12,10 +12,7 @@ Authors
 
 https://github.com/albinjal/CS4245-Project
 ## Introduction
-The need for car counting is prevalent in our modern vehicle-dependent society. There are many different scenarios in
-which it is important to know how many vehicles are in a certain area. Some of these include parking optimization,
-reducing congestion, and enhancing security. However, with the number the vast number of cars in the world, it is not feasible
-to do this by hand. Instead, we can use overhead imagery.
+The need for car counting is prevalent in our modern vehicle-dependent society. There are many different scenarios where it is important to know how many vehicles are in a certain area. Some of these include parking optimization, reducing congestion, and enhancing security. However, with the vast number of cars in the world, it is infeasible to do this manually. Instead, we can use overhead imagery to achieve this task.
 
 Overhead imagery provides a comprehensive and non-intrusive method for car counting. Using overhead images for this purpose
 is not a novel idea. An example of a method that uses these images is presented by Mundhenk et al. (2016). Their best-performing method uses Residual Learning with Inception, called ResCeption, and is trained on 256x256 patches of larger images. Their approach takes in an image and gives the number of cars as output. To count cars in a larger image they had to divide it into patches, using a softmax with 64 outputs. This, therefore, means that
